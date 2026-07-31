@@ -1,0 +1,50 @@
+rules_version = '2';
+
+// Deploy with:  firebase deploy --only firestore:rules
+//
+// Signing up gives someone an account, not permission to change the site.
+// Write access is limited to uids that exist in the `admins` collection,
+// which can only be granted from the Firebase console.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // Public content: anyone can read, only admins can change.
+    match /games/{gameId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /posts/{postId} {
+      allow read: if true;
+      allow write: if isAdmin();
+
+      // Visitors may leave comments; only admins can moderate them.
+      match /comments/{commentId} {
+        allow read: if true;
+        allow create: if request.resource.data.name is string
+          && request.resource.data.name.size() > 0
+          && request.resource.data.name.size() <= 40
+          && request.resource.data.message is string
+          && request.resource.data.message.size() > 0
+          && request.resource.data.message.size() <= 1000;
+        allow update, delete: if isAdmin();
+      }
+    }
+
+    // An account may check whether it is an admin, but never grant it.
+    match /admins/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Anything not matched above is closed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

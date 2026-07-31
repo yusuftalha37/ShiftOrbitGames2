@@ -113,3 +113,39 @@ npm install
 cp .env.local.example .env.local   # değerleri doldur
 npm run dev
 ```
+
+## Admin hesabı ve yetkilendirme
+
+Panele giriş `/admin/login` adresinden yapılır. Sayfada iki sekme vardır:
+**Sign in** (giriş) ve **Sign up** (kayıt).
+
+Önemli: **kayıt olmak yönetici olmak değildir.** Hesap açan herkes giriş
+yapabilir, ama siteyi düzenleyebilmek için hesabın ayrıca yetkilendirilmesi
+gerekir. Yetkisi olmayan bir hesap panele girdiğinde editör yerine kendi
+hesap kimliğini (uid) gösteren bir bilgi ekranı görür.
+
+### İlk yöneticiyi tanımlama
+
+1. `/admin/login` → **Sign up** ile hesabını oluştur.
+2. Panel sana bir **account ID** (uid) gösterecek — kopyala.
+3. Firebase Console → **Firestore Database** → `admins` adında bir koleksiyon
+   oluştur.
+4. Bu koleksiyonda **doküman kimliği (Document ID) uid olan** boş bir doküman
+   ekle. İçeriğe alan koymana gerek yok.
+5. Paneli yenile — editör açılacaktır.
+
+Aynı adımlarla istediğin kadar yönetici ekleyebilir, dokümanı silerek yetkiyi
+geri alabilirsin.
+
+### Güvenlik kurallarını yükleme
+
+`firestore.rules` dosyası, yazma yetkisini `admins` koleksiyonundaki
+hesaplarla sınırlar. Bu kurallar yüklenmezse tarayıcı tarafındaki kontrol tek
+başına yeterli olmaz — mutlaka yükle:
+
+```bash
+firebase deploy --only firestore:rules
+```
+
+Alternatif olarak Firebase Console → Firestore Database → **Rules** sekmesine
+dosyanın içeriğini yapıştırıp **Publish** diyebilirsin.

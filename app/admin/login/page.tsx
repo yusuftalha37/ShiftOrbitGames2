@@ -1,71 +1,226 @@
 "use client"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { signInWithEmailAndPassword } from "firebase/auth"
+import Link from "next/link"
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  updateProfile,
+} from "firebase/auth"
+import { FirebaseError } from "firebase/app"
 import { auth } from "@/lib/firebase"
+
+type Mode = "signin" | "signup"
+
+const fieldClass =
+  "mt-2 w-full rounded-lg border border-line-2 bg-paper px-3.5 py-2.5 text-[0.9375rem] text-ink transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+const labelClass = "block text-[0.8125rem] font-medium text-ink"
+
+/** Firebase error codes turned into something a person can act on. */
+function messageFor(code: string) {
+  switch (code) {
+    case "auth/invalid-credential":
+    case "auth/wrong-password":
+    case "auth/user-not-found":
+      return "Email or password is incorrect."
+    case "auth/email-already-in-use":
+      return "An account already exists for this email. Sign in instead."
+    case "auth/weak-password":
+      return "Password must be at least 6 characters."
+    case "auth/invalid-email":
+      return "That email address does not look right."
+    case "auth/too-many-requests":
+      return "Too many attempts. Wait a moment and try again."
+    case "auth/operation-not-allowed":
+      return "Email sign-in is not enabled for this Firebase project yet."
+    case "auth/network-request-failed":
+      return "Could not reach the server. Check your connection."
+    default:
+      return "Something went wrong. Please try again."
+  }
+}
 
 export default function AdminLoginPage() {
   const router = useRouter()
+  const [mode, setMode] = useState<Mode>("signin")
+  const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
+  const [notice, setNotice] = useState("")
   const [loading, setLoading] = useState(false)
+
+  function switchMode(next: Mode) {
+    setMode(next)
+    setError("")
+    setNotice("")
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError("")
+    setNotice("")
     setLoading(true)
     try {
-      await signInWithEmailAndPassword(auth, email, password)
+      if (mode === "signin") {
+        await signInWithEmailAndPassword(auth, email, password)
+      } else {
+        const cred = await createUserWithEmailAndPassword(auth, email, password)
+        if (name.trim()) {
+          await updateProfile(cred.user, { displayName: name.trim() })
+        }
+      }
       router.push("/admin")
-    } catch {
-      setError("Invalid email or password.")
+    } catch (err) {
+      setError(messageFor(err instanceof FirebaseError ? err.code : ""))
     } finally {
       setLoading(false)
     }
   }
 
+  async function handleReset() {
+    setError("")
+    setNotice("")
+    if (!email) {
+      setError("Enter your email address first, then request a reset link.")
+      return
+    }
+    try {
+      await sendPasswordResetEmail(auth, email)
+      setNotice(`If an account exists for ${email}, a reset link is on its way.`)
+    } catch (err) {
+      setError(messageFor(err instanceof FirebaseError ? err.code : ""))
+    }
+  }
+
   return (
-    <div className="flex min-h-[70vh] items-center justify-center px-6 py-16">
-      <form onSubmit={handleSubmit} className="card w-full max-w-sm space-y-5 p-8">
-        <h1 className="text-[1.25rem] font-semibold tracking-[-0.018em]">Admin sign in</h1>
-        <div>
-          <label htmlFor="admin-email" className="block text-[0.8125rem] font-medium text-ink">
-            Email
-          </label>
-          <input
-            id="admin-email"
-            type="email"
-            required
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mt-2 w-full rounded-lg border border-line-2 bg-paper px-3.5 py-2.5 text-[0.9375rem] text-ink transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
-          />
-        </div>
-        <div>
-          <label htmlFor="admin-password" className="block text-[0.8125rem] font-medium text-ink">
-            Password
-          </label>
-          <input
-            id="admin-password"
-            type="password"
-            required
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="mt-2 w-full rounded-lg border border-line-2 bg-paper px-3.5 py-2.5 text-[0.9375rem] text-ink transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
-          />
-        </div>
-        {error && (
-          <p role="alert" className="text-[0.875rem] text-ink-2">
-            {error}
+    <div className="flex min-h-[80vh] items-center justify-center px-6 py-16">
+      <div className="w-full max-w-sm">
+        <div className="card p-8">
+          <h1 className="text-[1.25rem] font-semibold tracking-[-0.018em]">
+            {mode === "signin" ? "Sign in" : "Create an account"}
+          </h1>
+          <p className="mt-2 text-[0.875rem] leading-relaxed text-ink-2">
+            {mode === "signin"
+              ? "Access the Shift Orbit content panel."
+              : "You can sign in as soon as the account exists, but editing the site is granted separately."}
           </p>
-        )}
-        <button type="submit" disabled={loading} className="btn btn-primary w-full">
-          {loading ? "Signing in…" : "Sign in"}
-        </button>
-      </form>
+
+          <div
+            role="tablist"
+            aria-label="Authentication mode"
+            className="mt-6 inline-flex w-full gap-1 rounded-lg border border-line bg-surface p-1"
+          >
+            {(["signin", "signup"] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                role="tab"
+                aria-selected={mode === m}
+                onClick={() => switchMode(m)}
+                className={`flex-1 rounded-md px-3 py-1.5 text-[0.875rem] font-medium transition-colors ${
+                  mode === m
+                    ? "bg-paper text-ink shadow-[0_1px_2px_rgba(13,15,18,0.06)]"
+                    : "text-ink-3 hover:text-ink"
+                }`}
+              >
+                {m === "signin" ? "Sign in" : "Sign up"}
+              </button>
+            ))}
+          </div>
+
+          <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+            {mode === "signup" && (
+              <div>
+                <label htmlFor="auth-name" className={labelClass}>
+                  Name
+                </label>
+                <input
+                  id="auth-name"
+                  type="text"
+                  autoComplete="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className={fieldClass}
+                />
+              </div>
+            )}
+
+            <div>
+              <label htmlFor="auth-email" className={labelClass}>
+                Email
+              </label>
+              <input
+                id="auth-email"
+                type="email"
+                required
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={fieldClass}
+              />
+            </div>
+
+            <div>
+              <div className="flex items-baseline justify-between gap-3">
+                <label htmlFor="auth-password" className={labelClass}>
+                  Password
+                </label>
+                {mode === "signin" && (
+                  <button
+                    type="button"
+                    onClick={handleReset}
+                    className="text-[0.75rem] text-ink-3 transition-colors hover:text-ink"
+                  >
+                    Forgot password?
+                  </button>
+                )}
+              </div>
+              <input
+                id="auth-password"
+                type="password"
+                required
+                minLength={6}
+                autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={fieldClass}
+              />
+              {mode === "signup" && (
+                <p className="mt-2 text-[0.75rem] text-ink-3">At least 6 characters.</p>
+              )}
+            </div>
+
+            {error && (
+              <p role="alert" className="text-[0.875rem] text-ink-2">
+                {error}
+              </p>
+            )}
+            {notice && (
+              <p role="status" className="text-[0.875rem] text-positive">
+                {notice}
+              </p>
+            )}
+
+            <button type="submit" disabled={loading} className="btn btn-primary w-full">
+              {loading
+                ? mode === "signin"
+                  ? "Signing in…"
+                  : "Creating account…"
+                : mode === "signin"
+                  ? "Sign in"
+                  : "Create account"}
+            </button>
+          </form>
+        </div>
+
+        <p className="mt-6 text-center text-[0.8125rem] text-ink-3">
+          <Link href="/" className="transition-colors hover:text-ink">
+            ← Back to the site
+          </Link>
+        </p>
+      </div>
     </div>
   )
 }

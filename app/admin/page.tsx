@@ -8,9 +8,10 @@ import NewsManager from "@/components/admin/NewsManager"
 import GameManager from "@/components/admin/GameManager"
 
 export default function AdminDashboard() {
-  const { user, loading: authLoading } = useAuth()
+  const { user, isAdmin, loading: authLoading } = useAuth()
   const router = useRouter()
   const [tab, setTab] = useState<"news" | "games">("games")
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -24,6 +25,56 @@ export default function AdminDashboard() {
     )
   }
 
+  // Signed in, but not on the admin list. Show the uid so an existing admin
+  // can grant access rather than leaving the person at a dead end.
+  if (!isAdmin) {
+    return (
+      <div className="flex min-h-[70vh] items-center justify-center px-6 py-16">
+        <div className="card w-full max-w-md p-8">
+          <h1 className="text-[1.25rem] font-semibold tracking-[-0.018em]">
+            Access not granted yet
+          </h1>
+          <p className="mt-3 text-[0.9375rem] leading-relaxed text-ink-2">
+            You are signed in as{" "}
+            <span className="font-medium text-ink">{user.email}</span>, but this
+            account is not allowed to edit the site. An existing admin can grant
+            access by adding your account ID to the <code className="mono">admins</code>{" "}
+            collection in Firebase.
+          </p>
+
+          <div className="mt-6">
+            <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.09em] text-ink-3">
+              Your account ID
+            </p>
+            <div className="mt-2 flex items-center gap-2">
+              <code className="mono flex-1 truncate rounded-lg border border-line bg-surface px-3 py-2 text-[0.8125rem]">
+                {user.uid}
+              </code>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard?.writeText(user.uid)
+                  setCopied(true)
+                  setTimeout(() => setCopied(false), 2000)
+                }}
+                className="btn btn-secondary btn-sm"
+              >
+                {copied ? "Copied" : "Copy"}
+              </button>
+            </div>
+          </div>
+
+          <button
+            onClick={() => signOut(auth)}
+            className="btn btn-secondary btn-sm mt-6"
+          >
+            Sign out
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="py-14">
       <div className="container-page max-w-[64rem]">
@@ -32,9 +83,14 @@ export default function AdminDashboard() {
             <p className="eyebrow">Admin panel</p>
             <h1 className="h2 mt-2">Shift Orbit</h1>
           </div>
-          <button onClick={() => signOut(auth)} className="btn btn-secondary btn-sm">
-            Sign out
-          </button>
+          <div className="flex items-center gap-3">
+            <span className="hidden text-[0.8125rem] text-ink-3 sm:inline">
+              {user.displayName || user.email}
+            </span>
+            <button onClick={() => signOut(auth)} className="btn btn-secondary btn-sm">
+              Sign out
+            </button>
+          </div>
         </div>
 
         {/* Tabs */}
