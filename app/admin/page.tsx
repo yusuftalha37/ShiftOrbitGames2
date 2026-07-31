@@ -6,11 +6,20 @@ import { auth } from "@/lib/firebase"
 import { useAuth } from "@/lib/auth-context"
 import NewsManager from "@/components/admin/NewsManager"
 import GameManager from "@/components/admin/GameManager"
+import Overview from "@/components/admin/Overview"
+
+type Tab = "overview" | "games" | "news"
+
+const TABS: { key: Tab; label: string }[] = [
+  { key: "overview", label: "Overview" },
+  { key: "games", label: "Games" },
+  { key: "news", label: "News" },
+]
 
 export default function AdminDashboard() {
   const { user, isAdmin, loading: authLoading } = useAuth()
   const router = useRouter()
-  const [tab, setTab] = useState<"news" | "games">("games")
+  const [tab, setTab] = useState<Tab>("overview")
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
@@ -99,24 +108,26 @@ export default function AdminDashboard() {
           aria-label="Content type"
           className="mb-10 inline-flex gap-1 rounded-lg border border-line bg-surface p-1"
         >
-          {(["games", "news"] as const).map((t) => (
+          {TABS.map((t) => (
             <button
-              key={t}
+              key={t.key}
               role="tab"
-              aria-selected={tab === t}
-              onClick={() => setTab(t)}
+              aria-selected={tab === t.key}
+              onClick={() => setTab(t.key)}
               className={`rounded-md px-4 py-1.5 text-[0.875rem] font-medium transition-colors ${
-                tab === t
+                tab === t.key
                   ? "bg-paper text-ink shadow-[0_1px_2px_rgba(13,15,18,0.06)]"
                   : "text-ink-3 hover:text-ink"
               }`}
             >
-              {t === "games" ? "Games" : "News"}
+              {t.label}
             </button>
           ))}
         </div>
 
-        {tab === "games" ? <GameManager /> : <NewsManager />}
+        {tab === "overview" && <Overview onNavigate={setTab} />}
+        {tab === "games" && <GameManager />}
+        {tab === "news" && <NewsManager />}
       </div>
     </div>
   )

@@ -4,6 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { getPost, getComments, addComment, NewsPost, Comment } from "@/lib/news"
 import { getGameBySlug, Game } from "@/lib/games"
+import { formatDate, readingTime } from "@/lib/format"
 
 export default function NewsDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -76,9 +77,12 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
           </div>
         )}
 
-        <p className="mb-3 text-[0.75rem] text-ink-3">
-          {post.createdAt?.toDate().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) ?? ""}
-          {" · "}{post.author}
+        <p className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.75rem] text-ink-3">
+          <span>{formatDate(post.createdAt)}</span>
+          <span aria-hidden="true">·</span>
+          <span>{post.author}</span>
+          <span aria-hidden="true">·</span>
+          <span>{readingTime(post.content)} min read</span>
         </p>
         <h1 className="h2 mb-4">{post.title}</h1>
         {post.gameSlug && (
@@ -133,12 +137,17 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
           </form>
 
           <div className="space-y-4">
+            {comments.length === 0 && (
+              <p className="text-[0.9375rem] text-ink-3">
+                No comments yet. Be the first to reply.
+              </p>
+            )}
             {comments.map((c) => (
               <div key={c.id} className="card p-5">
                 <div className="mb-2 flex items-center justify-between gap-4">
                   <span className="text-[0.875rem] font-semibold">{c.name}</span>
                   <span className="text-[0.75rem] text-ink-3">
-                    {c.createdAt?.toDate().toLocaleDateString("en-US", { month: "short", day: "numeric" }) ?? ""}
+                    {formatDate(c.createdAt, "short")}
                   </span>
                 </div>
                 <p className="text-[0.9375rem] leading-relaxed text-ink-2">{c.message}</p>

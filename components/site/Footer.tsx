@@ -43,10 +43,13 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-line">
-        <div className="container-page py-6 text-[0.8125rem] text-ink-3">
+        <div className="container-page flex flex-wrap items-center justify-between gap-3 py-6 text-[0.8125rem] text-ink-3">
           <p>
             © {year} {company.name}
           </p>
+          <Link href="/admin" className="transition-colors hover:text-ink">
+            Admin
+          </Link>
         </div>
       </div>
     </footer>

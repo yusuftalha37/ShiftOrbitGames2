@@ -1,5 +1,6 @@
 import Hero from "@/components/sections/Hero"
 import Games from "@/components/sections/Games"
+import News from "@/components/sections/News"
 import Team from "@/components/sections/Team"
 import Contact from "@/components/sections/Contact"
 
@@ -8,6 +9,7 @@ export default function Home() {
     <>
       <Hero />
       <Games />
+      <News />
       <Team />
       <Contact />
     </>

@@ -150,7 +150,7 @@ function GameCard({ game }: { game: Game }) {
           </ul>
         )}
 
-        <span className="mt-5 text-[0.8125rem] font-medium text-accent">
+        <span className="mt-auto pt-5 text-[0.8125rem] font-medium text-accent">
           View game →
         </span>
       </div>
