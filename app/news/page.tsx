@@ -11,55 +11,71 @@ export default function NewsPage() {
   useEffect(() => {
     getAllPosts()
       .then(setPosts)
+      .catch(() => setPosts([]))
       .finally(() => setLoading(false))
   }, [])
 
   return (
-    <div className="legacy-surface min-h-screen pt-32 pb-20 px-6">
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-16">
-          <p className="text-purple-400 text-sm font-semibold tracking-widest uppercase mb-3">Latest Updates</p>
-          <h1 className="section-title text-white mb-4">News &amp; Blog</h1>
-          <p className="text-slate-400 max-w-lg mx-auto">
-            Development updates, announcements, and stories from the Shift Orbit team.
+    <div className="section">
+      <div className="container-page">
+        <header className="max-w-[52ch]">
+          <p className="eyebrow">Latest updates</p>
+          <h1 className="h2 mt-4">News &amp; blog</h1>
+          <p className="lead mt-5">
+            Development updates, announcements, and stories from the Shift Orbit
+            team.
           </p>
-        </div>
+        </header>
 
-        {loading ? (
-          <p className="text-center text-slate-500">Loading...</p>
-        ) : posts.length === 0 ? (
-          <div className="text-center py-20 text-slate-600">
-            <p className="text-6xl mb-4">📰</p>
-            <p className="text-xl">No news yet. Check back soon.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {posts.map((post) => (
-              <Link
-                key={post.id}
-                href={`/news/${post.id}`}
-                className="group block rounded-2xl overflow-hidden hover-lift gradient-border"
-                style={{ background: "var(--bg-card)" }}
-              >
-                {post.coverImage && /^(\/|https?:\/\/)/.test(post.coverImage) && (
-                  <div className="relative h-48 bg-slate-900">
-                    <Image src={post.coverImage} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-110" />
-                  </div>
-                )}
-                <div className="p-6">
-                  <p className="text-xs text-slate-500 mb-2">
-                    {post.createdAt?.toDate().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) ?? ""}
-                    {" · "}{post.author}
-                  </p>
-                  <h2 className="text-xl font-bold text-white mb-2 group-hover:text-purple-300 transition-colors">
-                    {post.title}
-                  </h2>
-                  <p className="text-slate-400 text-sm line-clamp-3">{post.content.replace(/<[^>]*>/g, " ")}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
+        <div className="mt-12" aria-busy={loading}>
+          {loading ? (
+            <p className="text-[0.9375rem] text-ink-3">Loading…</p>
+          ) : posts.length === 0 ? (
+            <p className="border-t border-line pt-8 text-[0.9375rem] text-ink-3">
+              No news yet. Check back soon.
+            </p>
+          ) : (
+            <ul className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              {posts.map((post) => (
+                <li key={post.id}>
+                  <Link
+                    href={`/news/${post.id}`}
+                    className="card card-hover group flex h-full flex-col overflow-hidden"
+                  >
+                    {post.coverImage && /^(\/|https?:\/\/)/.test(post.coverImage) && (
+                      <div className="relative aspect-[16/9] overflow-hidden bg-surface-2">
+                        <Image
+                          src={post.coverImage}
+                          alt=""
+                          fill
+                          sizes="(max-width: 768px) 100vw, 540px"
+                          className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                        />
+                      </div>
+                    )}
+                    <div className="flex flex-1 flex-col p-5">
+                      <p className="text-[0.75rem] text-ink-3">
+                        {post.createdAt?.toDate().toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        }) ?? ""}
+                        {" · "}
+                        {post.author}
+                      </p>
+                      <h2 className="mt-2 text-[1.0625rem] font-semibold tracking-[-0.011em]">
+                        {post.title}
+                      </h2>
+                      <p className="mt-2 line-clamp-3 text-[0.9375rem] leading-relaxed text-ink-2">
+                        {post.content.replace(/<[^>]*>/g, " ")}
+                      </p>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   )

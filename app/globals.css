@@ -110,11 +110,6 @@ body {
   color: var(--color-accent);
 }
 
-/* On the dark band the accent is too low-contrast to read. */
-.eyebrow-invert {
-  color: rgba(255, 255, 255, 0.55);
-}
-
 .mono {
   font-family: var(--font-mono);
   font-variant-ligatures: none;
@@ -160,16 +155,6 @@ body {
 .btn-secondary:hover {
   background: var(--color-surface);
   border-color: var(--color-ink-3);
-}
-
-.btn-inverse {
-  background: #fff;
-  color: var(--color-ink);
-  border: 1px solid #fff;
-}
-.btn-inverse:hover {
-  background: #e9e9e6;
-  border-color: #e9e9e6;
 }
 
 .btn-sm {
@@ -251,55 +236,8 @@ body {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Legacy routes (/games, /news, /admin) predate this design
-   system and are styled for a dark canvas. This block keeps them
-   readable and self-contained until they are migrated.
+   Rich text content — shared by the Tiptap editor and rendered posts
    ───────────────────────────────────────────────────────────── */
-.legacy-surface {
-  background: #0d0f12;
-  color: #e8e8e4;
-  min-height: 100vh;
-}
-
-.legacy-surface .glass {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-}
-
-.glass {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-}
-
-.hover-lift {
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-.hover-lift:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 16px 40px -20px rgba(0, 0, 0, 0.6);
-}
-
-.shimmer-text {
-  color: #9aa4ff;
-}
-
-.gradient-border {
-  position: relative;
-}
-
-.section-title {
-  font-size: clamp(1.75rem, 3.4vw, 2.5rem);
-  font-weight: 600;
-  letter-spacing: -0.025em;
-}
-
-.float-anim,
-.glow-card {
-  /* Decorative animations retired with the previous brand. */
-}
-
-/* Tiptap editor & rendered post content */
 .prose-editor,
 .prose-content {
   line-height: 1.7;
@@ -336,14 +274,15 @@ body {
 }
 .prose-editor blockquote,
 .prose-content blockquote {
-  border-left: 3px solid var(--color-accent);
+  border-left: 2px solid var(--color-line-2);
   padding-left: 1em;
-  font-style: italic;
+  color: var(--color-ink-2);
   margin: 1em 0;
 }
 .prose-editor img,
 .prose-content img {
-  border-radius: 0.75rem;
+  border: 1px solid var(--color-line);
+  border-radius: 0.625rem;
   margin: 1em 0;
   max-width: 100%;
 }

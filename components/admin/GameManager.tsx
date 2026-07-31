@@ -126,25 +126,25 @@ export default function GameManager() {
   }
 
   const inputClass =
-    "w-full px-4 py-3 rounded-xl text-white placeholder-slate-600 outline-none focus:ring-2 focus:ring-purple-500 transition"
-  const inputStyle = { background: "rgba(255,255,255,0.05)", border: "1px solid rgba(124,58,237,0.3)" }
+    "w-full px-4 py-3 rounded-xl text-ink placeholder:text-ink-3/70 outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition"
+  const inputStyle = { background: "var(--color-paper)", border: "1px solid var(--color-line-2)" }
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-bold text-white">Games</h2>
+        <h2 className="text-lg font-bold text-ink">Games</h2>
         <button
           onClick={() => (showForm ? setShowForm(false) : startCreate())}
-          className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:scale-[1.02]"
-          style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)" }}
+          className="px-5 py-2.5 rounded-xl text-sm font-semibold text-ink transition-all hover:scale-[1.02]"
+          style={{ background: "var(--color-ink)" }}
         >
           {showForm ? "Cancel" : "+ New Game"}
         </button>
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="glass rounded-2xl p-6 mb-10 space-y-5">
-          <h3 className="font-bold text-white">{editingId ? "Edit Game" : "New Game"}</h3>
+        <form onSubmit={handleSubmit} className="card rounded-2xl p-6 mb-10 space-y-5">
+          <h3 className="font-bold text-ink">{editingId ? "Edit Game" : "New Game"}</h3>
 
           <input
             type="text"
@@ -194,9 +194,9 @@ export default function GameManager() {
                 className={inputClass}
                 style={inputStyle}
               >
-                <option value="in-development" style={{ background: "#0d0d1f" }}>In Development</option>
-                <option value="coming-soon" style={{ background: "#0d0d1f" }}>Coming Soon</option>
-                <option value="released" style={{ background: "#0d0d1f" }}>Released</option>
+                <option value="in-development" style={{ background: "var(--color-paper)" }}>In Development</option>
+                <option value="coming-soon" style={{ background: "var(--color-paper)" }}>Coming Soon</option>
+                <option value="released" style={{ background: "var(--color-paper)" }}>Released</option>
               </select>
             </div>
           </div>
@@ -257,21 +257,21 @@ export default function GameManager() {
           {/* Reviews */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium text-slate-300">Reviews</label>
-              <button type="button" onClick={addReview} className="text-xs text-purple-400 hover:text-purple-300">+ Add review</button>
+              <label className="text-sm font-medium text-ink-2">Reviews</label>
+              <button type="button" onClick={addReview} className="text-xs text-accent hover:text-accent">+ Add review</button>
             </div>
             <div className="space-y-3">
               {form.reviews.map((r, i) => (
-                <div key={i} className="p-3 rounded-xl space-y-2" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(124,58,237,0.2)" }}>
+                <div key={i} className="p-3 rounded-xl space-y-2" style={{ background: "var(--color-surface)", border: "1px solid var(--color-line)" }}>
                   <div className="grid grid-cols-2 gap-2">
                     <input placeholder="Author" value={r.author} onChange={(e) => updateReview(i, { author: e.target.value })} className={inputClass} style={inputStyle} />
                     <input placeholder="Source (e.g. Steam)" value={r.source} onChange={(e) => updateReview(i, { source: e.target.value })} className={inputClass} style={inputStyle} />
                   </div>
                   <textarea placeholder="Review text" value={r.text} onChange={(e) => updateReview(i, { text: e.target.value })} rows={2} className={`${inputClass} resize-none`} style={inputStyle} />
                   <div className="flex items-center gap-3">
-                    <label className="text-xs text-slate-500">Rating</label>
-                    <input type="number" min={1} max={5} value={r.rating ?? 5} onChange={(e) => updateReview(i, { rating: Number(e.target.value) })} className="w-16 px-2 py-1 rounded-lg text-white text-sm" style={inputStyle} />
-                    <button type="button" onClick={() => removeReview(i)} className="ml-auto text-xs text-red-400 hover:text-red-300">Remove</button>
+                    <label className="text-xs text-ink-3">Rating</label>
+                    <input type="number" min={1} max={5} value={r.rating ?? 5} onChange={(e) => updateReview(i, { rating: Number(e.target.value) })} className="w-16 px-2 py-1 rounded-lg text-ink text-sm" style={inputStyle} />
+                    <button type="button" onClick={() => removeReview(i)} className="ml-auto text-xs text-ink-2 hover:text-red-300">Remove</button>
                   </div>
                 </div>
               ))}
@@ -281,24 +281,24 @@ export default function GameManager() {
           {/* Social content */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium text-slate-300">Community Content (videos, streams)</label>
-              <button type="button" onClick={addSocial} className="text-xs text-purple-400 hover:text-purple-300">+ Add content</button>
+              <label className="text-sm font-medium text-ink-2">Community Content (videos, streams)</label>
+              <button type="button" onClick={addSocial} className="text-xs text-accent hover:text-accent">+ Add content</button>
             </div>
             <div className="space-y-3">
               {form.socialContent.map((s, i) => (
-                <div key={i} className="p-3 rounded-xl space-y-2" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(124,58,237,0.2)" }}>
+                <div key={i} className="p-3 rounded-xl space-y-2" style={{ background: "var(--color-surface)", border: "1px solid var(--color-line)" }}>
                   <div className="grid grid-cols-2 gap-2">
                     <input placeholder="Platform (YouTube, Twitch...)" value={s.platform} onChange={(e) => updateSocial(i, { platform: e.target.value })} className={inputClass} style={inputStyle} />
                     <input placeholder="Creator name" value={s.creator} onChange={(e) => updateSocial(i, { creator: e.target.value })} className={inputClass} style={inputStyle} />
                   </div>
                   <input placeholder="Content URL" value={s.url} onChange={(e) => updateSocial(i, { url: e.target.value })} className={inputClass} style={inputStyle} />
                   <div className="flex items-center gap-3">
-                    <select value={s.type} onChange={(e) => updateSocial(i, { type: e.target.value as SocialContent["type"] })} className="px-3 py-2 rounded-lg text-sm text-white" style={inputStyle}>
-                      <option value="video" style={{ background: "#0d0d1f" }}>Video</option>
-                      <option value="post" style={{ background: "#0d0d1f" }}>Post</option>
-                      <option value="article" style={{ background: "#0d0d1f" }}>Article</option>
+                    <select value={s.type} onChange={(e) => updateSocial(i, { type: e.target.value as SocialContent["type"] })} className="px-3 py-2 rounded-lg text-sm text-ink" style={inputStyle}>
+                      <option value="video" style={{ background: "var(--color-paper)" }}>Video</option>
+                      <option value="post" style={{ background: "var(--color-paper)" }}>Post</option>
+                      <option value="article" style={{ background: "var(--color-paper)" }}>Article</option>
                     </select>
-                    <button type="button" onClick={() => removeSocial(i)} className="ml-auto text-xs text-red-400 hover:text-red-300">Remove</button>
+                    <button type="button" onClick={() => removeSocial(i)} className="ml-auto text-xs text-ink-2 hover:text-red-300">Remove</button>
                   </div>
                 </div>
               ))}
@@ -308,8 +308,8 @@ export default function GameManager() {
           <button
             type="submit"
             disabled={submitting}
-            className="px-6 py-3 rounded-xl font-semibold text-white transition-all hover:scale-[1.02] disabled:opacity-50"
-            style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)" }}
+            className="px-6 py-3 rounded-xl font-semibold text-ink transition-all hover:scale-[1.02] disabled:opacity-50"
+            style={{ background: "var(--color-ink)" }}
           >
             {submitting ? "Saving..." : editingId ? "Save Changes" : "Create Game"}
           </button>
@@ -317,29 +317,29 @@ export default function GameManager() {
       )}
 
       {loading ? (
-        <p className="text-slate-500">Loading...</p>
+        <p className="text-ink-3">Loading...</p>
       ) : games.length === 0 ? (
-        <p className="text-slate-600">No games yet. Create your first one above.</p>
+        <p className="text-ink-3">No games yet. Create your first one above.</p>
       ) : (
         <div className="space-y-3">
           {games.map((game) => (
-            <div key={game.id} className="glass rounded-xl p-5 flex items-center justify-between gap-4">
+            <div key={game.id} className="card rounded-xl p-5 flex items-center justify-between gap-4">
               <div>
-                <p className="font-semibold text-white">{game.title}</p>
-                <p className="text-xs text-slate-500">/{game.slug} · {game.status}</p>
+                <p className="font-semibold text-ink">{game.title}</p>
+                <p className="text-xs text-ink-3">/{game.slug} · {game.status}</p>
               </div>
               <div className="flex gap-2 flex-shrink-0">
                 <button
                   onClick={() => startEdit(game)}
-                  className="px-4 py-2 rounded-lg text-xs font-semibold text-purple-300 transition-colors hover:text-purple-200"
-                  style={{ border: "1px solid rgba(124,58,237,0.3)" }}
+                  className="px-4 py-2 rounded-lg text-xs font-semibold text-accent transition-colors hover:text-accent-2"
+                  style={{ border: "1px solid var(--color-line-2)" }}
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => handleDelete(game.id)}
-                  className="px-4 py-2 rounded-lg text-xs font-semibold text-red-400 transition-colors hover:text-red-300"
-                  style={{ border: "1px solid rgba(248,113,113,0.3)" }}
+                  className="px-4 py-2 rounded-lg text-xs font-semibold text-ink-2 transition-colors hover:text-red-300"
+                  style={{ border: "1px solid var(--color-line-2)" }}
                 >
                   Delete
                 </button>

@@ -11,41 +11,54 @@ export default function GameNewsSection({ gameSlug }: { gameSlug: string }) {
   useEffect(() => {
     getPostsByGame(gameSlug)
       .then(setPosts)
+      .catch(() => setPosts([]))
       .finally(() => setLoading(false))
   }, [gameSlug])
 
   if (loading || posts.length === 0) return null
 
   return (
-    <section>
-      <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-        <span className="w-1 h-6 rounded-full bg-indigo-500 inline-block" />
-        Game News
+    <section aria-labelledby="game-news-heading">
+      <h2
+        id="game-news-heading"
+        className="mb-4 border-b border-line pb-3 text-[1.0625rem] font-semibold tracking-[-0.011em]"
+      >
+        Game news
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {posts.map((post) => (
-          <Link
-            key={post.id}
-            href={`/news/${post.id}`}
-            className="group block rounded-xl overflow-hidden hover-lift"
-            style={{ background: "var(--bg-card)", border: "1px solid rgba(124,58,237,0.2)" }}
-          >
-            {post.coverImage && /^(\/|https?:\/\/)/.test(post.coverImage) && (
-              <div className="relative h-32 bg-slate-900">
-                <Image src={post.coverImage} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
+          <li key={post.id}>
+            <Link
+              href={`/news/${post.id}`}
+              className="card card-hover group block h-full overflow-hidden"
+            >
+              {post.coverImage && /^(\/|https?:\/\/)/.test(post.coverImage) && (
+                <div className="relative aspect-[16/9] bg-surface-2">
+                  <Image
+                    src={post.coverImage}
+                    alt=""
+                    fill
+                    sizes="(max-width: 640px) 100vw, 360px"
+                    className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                  />
+                </div>
+              )}
+              <div className="p-4">
+                <p className="text-[0.75rem] text-ink-3">
+                  {post.createdAt?.toDate().toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  }) ?? ""}
+                </p>
+                <p className="mt-1.5 line-clamp-1 text-[0.9375rem] font-medium">
+                  {post.title}
+                </p>
               </div>
-            )}
-            <div className="p-4">
-              <p className="text-xs text-slate-500 mb-1">
-                {post.createdAt?.toDate().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) ?? ""}
-              </p>
-              <p className="font-semibold text-white group-hover:text-purple-300 transition-colors line-clamp-1">
-                {post.title}
-              </p>
-            </div>
-          </Link>
+            </Link>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   )
 }

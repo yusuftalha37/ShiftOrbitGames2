@@ -19,37 +19,41 @@ export default function AdminDashboard() {
   }, [authLoading, user, router])
 
   if (authLoading || !user) {
-    return <div className="legacy-surface min-h-screen pt-32 text-center text-slate-500">Loading...</div>
+    return (
+      <div className="section container-page text-[0.9375rem] text-ink-3">Loading…</div>
+    )
   }
 
   return (
-    <div className="legacy-surface min-h-screen pt-28 pb-20 px-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+    <div className="py-14">
+      <div className="container-page max-w-[64rem]">
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-purple-400 text-sm font-semibold tracking-widest uppercase mb-1">Admin Panel</p>
-            <h1 className="text-3xl font-black text-white">Shift Orbit</h1>
+            <p className="eyebrow">Admin panel</p>
+            <h1 className="h2 mt-2">Shift Orbit</h1>
           </div>
-          <button
-            onClick={() => signOut(auth)}
-            className="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-300 transition-colors hover:text-white"
-            style={{ border: "1px solid rgba(124,58,237,0.3)" }}
-          >
-            Sign Out
+          <button onClick={() => signOut(auth)} className="btn btn-secondary btn-sm">
+            Sign out
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-10 p-1 rounded-xl inline-flex" style={{ background: "rgba(255,255,255,0.05)" }}>
+        <div
+          role="tablist"
+          aria-label="Content type"
+          className="mb-10 inline-flex gap-1 rounded-lg border border-line bg-surface p-1"
+        >
           {(["games", "news"] as const).map((t) => (
             <button
               key={t}
+              role="tab"
+              aria-selected={tab === t}
               onClick={() => setTab(t)}
-              className="px-5 py-2 rounded-lg text-sm font-semibold transition-all capitalize"
-              style={{
-                background: tab === t ? "linear-gradient(135deg, #7c3aed, #4f46e5)" : "transparent",
-                color: tab === t ? "white" : "#94a3b8",
-              }}
+              className={`rounded-md px-4 py-1.5 text-[0.875rem] font-medium transition-colors ${
+                tab === t
+                  ? "bg-paper text-ink shadow-[0_1px_2px_rgba(13,15,18,0.06)]"
+                  : "text-ink-3 hover:text-ink"
+              }`}
             >
               {t === "games" ? "Games" : "News"}
             </button>

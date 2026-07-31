@@ -20,33 +20,32 @@ const jetbrainsMono = JetBrains_Mono({
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
 const description =
-  "Shift Orbit is a software engineering studio in İstanbul. We design, build, and operate custom platforms, internal tools, and the APIs between them — from discovery through to production support."
+  "Shift Orbit is an independent game studio building bold, universe-scale gaming experiences. Explore our games, meet the team, and follow development news."
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: `${company.name} — Software engineering studio`,
+    default: `${company.name} — Independent game studio`,
     template: `%s — ${company.name}`,
   },
   description,
   keywords: [
-    "software development company",
-    "custom software development",
-    "product engineering",
-    "internal tools",
-    "software studio İstanbul",
+    "independent game studio",
+    "indie games",
+    "game development",
+    "Shift Orbit games",
   ],
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     url: siteUrl,
     siteName: company.name,
-    title: `${company.name} — Software engineering studio`,
+    title: `${company.name} — Independent game studio`,
     description,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${company.name} — Software engineering studio`,
+    title: `${company.name} — Independent game studio`,
     description,
   },
   robots: { index: true, follow: true },
@@ -55,22 +54,13 @@ export const metadata: Metadata = {
 
 const organizationSchema = {
   "@context": "https://schema.org",
-  "@type": "ProfessionalService",
+  "@type": "Organization",
   name: company.name,
-  legalName: company.legalName,
   description,
   url: siteUrl,
   email: company.email,
-  telephone: company.phone,
   foundingDate: String(company.founded),
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: company.address.street,
-    addressLocality: company.address.locality,
-    addressCountry: "TR",
-  },
-  areaServed: ["TR", "EU", "GB"],
-  knowsLanguage: ["tr", "en"],
+  logo: `${siteUrl}/logo.png`,
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -57,9 +57,9 @@ function ToolbarButton({
       onClick={onClick}
       className="px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors"
       style={{
-        background: active ? "rgba(124,58,237,0.4)" : "rgba(255,255,255,0.05)",
-        color: active ? "#e9d5ff" : "#cbd5e1",
-        border: "1px solid rgba(124,58,237,0.25)",
+        background: active ? "var(--color-line-2)" : "var(--color-paper)",
+        color: active ? "var(--color-accent)" : "var(--color-ink-2)",
+        border: "1px solid var(--color-line)",
       }}
     >
       {children}
@@ -87,7 +87,7 @@ export default function RichTextEditor({ content, onChange }: Props) {
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
     editorProps: {
       attributes: {
-        class: "prose-editor min-h-[240px] px-4 py-3 focus:outline-none text-slate-200",
+        class: "prose-editor min-h-[240px] px-4 py-3 focus:outline-none text-ink-2",
       },
     },
   })
@@ -107,9 +107,9 @@ export default function RichTextEditor({ content, onChange }: Props) {
   }
 
   return (
-    <div className="rounded-xl overflow-hidden" style={{ border: "1px solid rgba(124,58,237,0.3)", background: "rgba(255,255,255,0.03)" }}>
+    <div className="rounded-xl overflow-hidden" style={{ border: "1px solid var(--color-line-2)", background: "var(--color-surface)" }}>
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-1.5 p-2" style={{ borderBottom: "1px solid rgba(124,58,237,0.2)" }}>
+      <div className="flex flex-wrap items-center gap-1.5 p-2" style={{ borderBottom: "1px solid var(--color-line)" }}>
         <ToolbarButton title="Bold" active={editor.isActive("bold")} onClick={() => editor.chain().focus().toggleBold().run()}>
           <b>B</b>
         </ToolbarButton>
@@ -123,7 +123,7 @@ export default function RichTextEditor({ content, onChange }: Props) {
           <s>S</s>
         </ToolbarButton>
 
-        <div className="w-px h-5 mx-1" style={{ background: "rgba(124,58,237,0.3)" }} />
+        <div className="w-px h-5 mx-1" style={{ background: "var(--color-line-2)" }} />
 
         <ToolbarButton title="Heading 1" active={editor.isActive("heading", { level: 1 })} onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}>
           H1
@@ -137,7 +137,7 @@ export default function RichTextEditor({ content, onChange }: Props) {
 
         <select
           className="px-2 py-1.5 rounded-lg text-xs font-semibold outline-none"
-          style={{ background: "rgba(255,255,255,0.05)", color: "#cbd5e1", border: "1px solid rgba(124,58,237,0.25)" }}
+          style={{ background: "var(--color-paper)", color: "var(--color-ink-2)", border: "1px solid var(--color-line)" }}
           onChange={(e) => setFontSize(e.target.value)}
           defaultValue=""
         >
@@ -147,7 +147,7 @@ export default function RichTextEditor({ content, onChange }: Props) {
           ))}
         </select>
 
-        <div className="w-px h-5 mx-1" style={{ background: "rgba(124,58,237,0.3)" }} />
+        <div className="w-px h-5 mx-1" style={{ background: "var(--color-line-2)" }} />
 
         <ToolbarButton title="Bullet list" active={editor.isActive("bulletList")} onClick={() => editor.chain().focus().toggleBulletList().run()}>
           • List
@@ -159,7 +159,7 @@ export default function RichTextEditor({ content, onChange }: Props) {
           "
         </ToolbarButton>
 
-        <div className="w-px h-5 mx-1" style={{ background: "rgba(124,58,237,0.3)" }} />
+        <div className="w-px h-5 mx-1" style={{ background: "var(--color-line-2)" }} />
 
         <ToolbarButton title="Align left" active={editor.isActive({ textAlign: "left" })} onClick={() => editor.chain().focus().setTextAlign("left").run()}>
           ⯇
@@ -171,7 +171,7 @@ export default function RichTextEditor({ content, onChange }: Props) {
           ⯈
         </ToolbarButton>
 
-        <div className="w-px h-5 mx-1" style={{ background: "rgba(124,58,237,0.3)" }} />
+        <div className="w-px h-5 mx-1" style={{ background: "var(--color-line-2)" }} />
 
         <ToolbarButton title="Insert image" onClick={() => setShowImageInput((v) => !v)}>
           🖼 Image
@@ -179,21 +179,21 @@ export default function RichTextEditor({ content, onChange }: Props) {
       </div>
 
       {showImageInput && (
-        <div className="flex gap-2 p-3" style={{ borderBottom: "1px solid rgba(124,58,237,0.2)" }}>
+        <div className="flex gap-2 p-3" style={{ borderBottom: "1px solid var(--color-line)" }}>
           <input
             type="text"
             placeholder="Paste image URL..."
             value={imageUrl}
             onChange={(e) => setImageUrl(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), insertImage())}
-            className="flex-1 px-3 py-2 rounded-lg text-sm text-white placeholder-slate-600 outline-none"
-            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(124,58,237,0.3)" }}
+            className="flex-1 px-3 py-2 rounded-lg text-sm text-ink placeholder:text-ink-3/70 outline-none"
+            style={{ background: "var(--color-paper)", border: "1px solid var(--color-line-2)" }}
           />
           <button
             type="button"
             onClick={insertImage}
-            className="px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)" }}
+            className="px-4 py-2 rounded-lg text-sm font-semibold text-ink"
+            style={{ background: "var(--color-ink)" }}
           >
             Insert
           </button>

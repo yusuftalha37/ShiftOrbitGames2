@@ -26,41 +26,44 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="legacy-surface min-h-screen flex items-center justify-center px-6 pt-20">
-      <form onSubmit={handleSubmit} className="glass rounded-2xl p-8 w-full max-w-sm space-y-5">
-        <h1 className="text-2xl font-black text-white text-center mb-2">
-          Admin <span className="shimmer-text">Login</span>
-        </h1>
+    <div className="flex min-h-[70vh] items-center justify-center px-6 py-16">
+      <form onSubmit={handleSubmit} className="card w-full max-w-sm space-y-5 p-8">
+        <h1 className="text-[1.25rem] font-semibold tracking-[-0.018em]">Admin sign in</h1>
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-2">Email</label>
+          <label htmlFor="admin-email" className="block text-[0.8125rem] font-medium text-ink">
+            Email
+          </label>
           <input
+            id="admin-email"
             type="email"
             required
+            autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl text-white outline-none focus:ring-2 focus:ring-purple-500 transition"
-            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(124,58,237,0.3)" }}
+            className="mt-2 w-full rounded-lg border border-line-2 bg-paper px-3.5 py-2.5 text-[0.9375rem] text-ink transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-2">Password</label>
+          <label htmlFor="admin-password" className="block text-[0.8125rem] font-medium text-ink">
+            Password
+          </label>
           <input
+            id="admin-password"
             type="password"
             required
+            autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl text-white outline-none focus:ring-2 focus:ring-purple-500 transition"
-            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(124,58,237,0.3)" }}
+            className="mt-2 w-full rounded-lg border border-line-2 bg-paper px-3.5 py-2.5 text-[0.9375rem] text-ink transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
           />
         </div>
-        {error && <p className="text-red-400 text-sm">{error}</p>}
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-3.5 rounded-xl font-semibold text-white transition-all hover:scale-[1.02] disabled:opacity-50"
-          style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)" }}
-        >
-          {loading ? "Signing in..." : "Sign In"}
+        {error && (
+          <p role="alert" className="text-[0.875rem] text-ink-2">
+            {error}
+          </p>
+        )}
+        <button type="submit" disabled={loading} className="btn btn-primary w-full">
+          {loading ? "Signing in…" : "Sign in"}
         </button>
       </form>
     </div>

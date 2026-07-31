@@ -37,7 +37,7 @@ export default function Header() {
       }`}
     >
       <div className="container-page flex h-16 items-center justify-between gap-6">
-        <Link href="/" className="text-ink" aria-label={`${"Shift Orbit"} — home`}>
+        <Link href="/" className="text-ink" aria-label="Shift Orbit — home">
           <Logo />
         </Link>
 
@@ -45,21 +45,21 @@ export default function Header() {
           <ul className="flex items-center gap-7">
             {nav.map((item) => (
               <li key={item.href}>
-                <a
+                <Link
                   href={item.href}
                   className="text-[0.875rem] text-ink-2 transition-colors hover:text-ink"
                 >
                   {item.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
-          <a href="#contact" className="btn btn-primary btn-sm">
-            Start a project
-          </a>
+          <Link href="/#contact" className="btn btn-primary btn-sm">
+            Get in touch
+          </Link>
         </div>
 
         <button
@@ -96,23 +96,23 @@ export default function Header() {
             <ul>
               {nav.map((item) => (
                 <li key={item.href} className="border-b border-line last:border-0">
-                  <a
+                  <Link
                     href={item.href}
                     onClick={() => setOpen(false)}
                     className="block py-3.5 text-[0.9375rem] text-ink"
                   >
                     {item.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
-            <a
-              href="#contact"
+            <Link
+              href="/#contact"
               onClick={() => setOpen(false)}
               className="btn btn-primary my-4 w-full"
             >
-              Start a project
-            </a>
+              Get in touch
+            </Link>
           </nav>
         </div>
       )}

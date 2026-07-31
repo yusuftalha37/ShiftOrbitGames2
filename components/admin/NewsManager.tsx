@@ -60,13 +60,13 @@ export default function NewsManager() {
   }
 
   const inputClass =
-    "w-full px-4 py-3 rounded-xl text-white placeholder-slate-600 outline-none focus:ring-2 focus:ring-purple-500 transition"
-  const inputStyle = { background: "rgba(255,255,255,0.05)", border: "1px solid rgba(124,58,237,0.3)" }
+    "w-full px-4 py-3 rounded-xl text-ink placeholder:text-ink-3/70 outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition"
+  const inputStyle = { background: "var(--color-paper)", border: "1px solid var(--color-line-2)" }
 
   return (
     <div>
-      <form onSubmit={handleCreate} className="glass rounded-2xl p-6 mb-12 space-y-4">
-        <h2 className="text-lg font-bold text-white mb-2">New Post</h2>
+      <form onSubmit={handleCreate} className="card rounded-2xl p-6 mb-12 space-y-4">
+        <h2 className="text-lg font-bold text-ink mb-2">New Post</h2>
         <input
           type="text"
           placeholder="Title"
@@ -79,16 +79,16 @@ export default function NewsManager() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
           <ImageUrlInput label="Cover Image (optional)" value={coverImage} onChange={setCoverImage} />
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Linked Game</label>
+            <label className="block text-sm font-medium text-ink-2 mb-2">Linked Game</label>
             <select
               value={gameSlug}
               onChange={(e) => setGameSlug(e.target.value)}
               className={inputClass}
               style={inputStyle}
             >
-              <option value="" style={{ background: "#0d0d1f" }}>No linked game (general news)</option>
+              <option value="" style={{ background: "var(--color-paper)" }}>No linked game (general news)</option>
               {games.map((g) => (
-                <option key={g.slug} value={g.slug} style={{ background: "#0d0d1f" }}>
+                <option key={g.slug} value={g.slug} style={{ background: "var(--color-paper)" }}>
                   {g.title}
                 </option>
               ))}
@@ -97,35 +97,35 @@ export default function NewsManager() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-2">Content</label>
+          <label className="block text-sm font-medium text-ink-2 mb-2">Content</label>
           <RichTextEditor key={editorKey} content={content} onChange={setContent} />
         </div>
 
         <button
           type="submit"
           disabled={submitting}
-          className="px-6 py-3 rounded-xl font-semibold text-white transition-all hover:scale-[1.02] disabled:opacity-50"
-          style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)" }}
+          className="px-6 py-3 rounded-xl font-semibold text-ink transition-all hover:scale-[1.02] disabled:opacity-50"
+          style={{ background: "var(--color-ink)" }}
         >
           {submitting ? "Publishing..." : "Publish Post"}
         </button>
       </form>
 
-      <h2 className="text-lg font-bold text-white mb-4">Published Posts</h2>
+      <h2 className="text-lg font-bold text-ink mb-4">Published Posts</h2>
       {loadingPosts ? (
-        <p className="text-slate-500">Loading...</p>
+        <p className="text-ink-3">Loading...</p>
       ) : posts.length === 0 ? (
-        <p className="text-slate-600">No posts yet.</p>
+        <p className="text-ink-3">No posts yet.</p>
       ) : (
         <div className="space-y-3">
           {posts.map((post) => (
-            <div key={post.id} className="glass rounded-xl p-5 flex items-center justify-between gap-4">
+            <div key={post.id} className="card rounded-xl p-5 flex items-center justify-between gap-4">
               <div>
-                <p className="font-semibold text-white">{post.title}</p>
-                <p className="text-xs text-slate-500">
+                <p className="font-semibold text-ink">{post.title}</p>
+                <p className="text-xs text-ink-3">
                   {post.createdAt?.toDate().toLocaleDateString() ?? ""}
                   {post.gameSlug && (
-                    <span className="ml-2 px-2 py-0.5 rounded-full" style={{ background: "rgba(124,58,237,0.2)", color: "#c4b5fd" }}>
+                    <span className="ml-2 px-2 py-0.5 rounded-full" style={{ background: "var(--color-line)", color: "var(--color-accent)" }}>
                       {games.find((g) => g.slug === post.gameSlug)?.title ?? post.gameSlug}
                     </span>
                   )}
@@ -133,8 +133,8 @@ export default function NewsManager() {
               </div>
               <button
                 onClick={() => handleDelete(post.id)}
-                className="px-4 py-2 rounded-lg text-xs font-semibold text-red-400 transition-colors hover:text-red-300 flex-shrink-0"
-                style={{ border: "1px solid rgba(248,113,113,0.3)" }}
+                className="px-4 py-2 rounded-lg text-xs font-semibold text-ink-2 transition-colors hover:text-red-300 flex-shrink-0"
+                style={{ border: "1px solid var(--color-line-2)" }}
               >
                 Delete
               </button>

@@ -44,101 +44,109 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
   }
 
   if (loading) {
-    return <div className="legacy-surface min-h-screen pt-32 text-center text-slate-500">Loading...</div>
+    return (
+      <div className="section container-page text-[0.9375rem] text-ink-3">Loading…</div>
+    )
   }
 
   if (!post) {
     return (
-      <div className="legacy-surface min-h-screen pt-32 text-center">
-        <p className="text-slate-400 mb-6">Post not found.</p>
-        <Link href="/news" className="text-purple-400 hover:text-purple-300">← Back to News</Link>
+      <div className="section container-page">
+        <p className="text-[0.9375rem] text-ink-2">Post not found.</p>
+        <Link href="/news" className="link-accent mt-4 inline-block">
+          ← Back to news
+        </Link>
       </div>
     )
   }
 
   return (
-    <div className="legacy-surface min-h-screen pt-32 pb-20 px-6">
-      <div className="max-w-3xl mx-auto">
-        <Link href="/news" className="text-sm text-slate-500 hover:text-purple-400 transition-colors mb-8 inline-block">
-          ← Back to News
+    <div className="section">
+      <article className="container-page max-w-[46rem]">
+        <Link
+          href="/news"
+          className="mb-8 inline-block text-[0.875rem] text-ink-3 transition-colors hover:text-ink"
+        >
+          ← Back to news
         </Link>
 
         {post.coverImage && /^(\/|https?:\/\/)/.test(post.coverImage) && (
-          <div className="relative w-full aspect-video rounded-2xl overflow-hidden mb-8">
-            <Image src={post.coverImage} alt={post.title} fill className="object-cover" />
+          <div className="relative mb-8 aspect-video w-full overflow-hidden rounded-xl border border-line bg-surface-2">
+            <Image src={post.coverImage} alt="" fill sizes="736px" className="object-cover" />
           </div>
         )}
 
-        <p className="text-xs text-slate-500 mb-3">
+        <p className="mb-3 text-[0.75rem] text-ink-3">
           {post.createdAt?.toDate().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) ?? ""}
           {" · "}{post.author}
         </p>
-        <h1 className="text-3xl md:text-4xl font-black text-white mb-4">{post.title}</h1>
+        <h1 className="h2 mb-4">{post.title}</h1>
         {post.gameSlug && (
           <Link
             href={`/games/${post.gameSlug}`}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-8 transition-all hover:scale-105"
-            style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.4)", color: "#c4b5fd" }}
+            className="chip mb-8 transition-colors hover:border-line-2 hover:text-ink"
           >
-            🎮 {linkedGame?.title ?? post.gameSlug}
+            {linkedGame?.title ?? post.gameSlug}
           </Link>
         )}
         <div
-          className="prose-content text-slate-300 mb-16"
+          className="prose-content mb-16 text-ink-2"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
 
         {/* Comments */}
         <section>
-          <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-            <span className="w-1 h-6 rounded-full bg-cyan-500 inline-block" />
+          <h2 className="mb-6 border-t border-line pt-8 text-[1.0625rem] font-semibold tracking-[-0.011em]">
             Comments ({comments.length})
           </h2>
 
-          <form onSubmit={handleSubmit} className="glass rounded-2xl p-6 mb-8 space-y-4">
-            <input
-              type="text"
-              placeholder="Your name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              maxLength={40}
-              className="w-full px-4 py-3 rounded-xl text-white placeholder-slate-600 outline-none focus:ring-2 focus:ring-purple-500 transition"
-              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(124,58,237,0.3)" }}
-            />
-            <textarea
-              rows={3}
-              placeholder="Share your thoughts..."
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              maxLength={1000}
-              className="w-full px-4 py-3 rounded-xl text-white placeholder-slate-600 outline-none focus:ring-2 focus:ring-purple-500 transition resize-none"
-              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(124,58,237,0.3)" }}
-            />
-            <button
-              type="submit"
-              disabled={submitting}
-              className="px-6 py-3 rounded-xl font-semibold text-white transition-all hover:scale-[1.02] disabled:opacity-50"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)" }}
-            >
-              {submitting ? "Posting..." : "Post Comment"}
+          <form onSubmit={handleSubmit} className="card mb-8 space-y-4 p-6">
+            <div>
+              <label htmlFor="comment-name" className="block text-[0.8125rem] font-medium text-ink">
+                Name
+              </label>
+              <input
+                id="comment-name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                maxLength={40}
+                className="mt-2 w-full rounded-lg border border-line-2 bg-paper px-3.5 py-2.5 text-[0.9375rem] text-ink transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+              />
+            </div>
+            <div>
+              <label htmlFor="comment-message" className="block text-[0.8125rem] font-medium text-ink">
+                Comment
+              </label>
+              <textarea
+                id="comment-message"
+                rows={4}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                maxLength={1000}
+                className="mt-2 w-full resize-y rounded-lg border border-line-2 bg-paper px-3.5 py-2.5 text-[0.9375rem] text-ink transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+              />
+            </div>
+            <button type="submit" disabled={submitting} className="btn btn-primary">
+              {submitting ? "Posting…" : "Post comment"}
             </button>
           </form>
 
           <div className="space-y-4">
             {comments.map((c) => (
-              <div key={c.id} className="glass rounded-xl p-5">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-semibold text-white text-sm">{c.name}</span>
-                  <span className="text-xs text-slate-600">
+              <div key={c.id} className="card p-5">
+                <div className="mb-2 flex items-center justify-between gap-4">
+                  <span className="text-[0.875rem] font-semibold">{c.name}</span>
+                  <span className="text-[0.75rem] text-ink-3">
                     {c.createdAt?.toDate().toLocaleDateString("en-US", { month: "short", day: "numeric" }) ?? ""}
                   </span>
                 </div>
-                <p className="text-slate-300 text-sm">{c.message}</p>
+                <p className="text-[0.9375rem] leading-relaxed text-ink-2">{c.message}</p>
               </div>
             ))}
           </div>
         </section>
-      </div>
+      </article>
     </div>
   )
 }
