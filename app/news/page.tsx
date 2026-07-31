@@ -15,7 +15,7 @@ export default function NewsPage() {
   }, [])
 
   return (
-    <div className="min-h-screen pt-32 pb-20 px-6">
+    <div className="legacy-surface min-h-screen pt-32 pb-20 px-6">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <p className="text-purple-400 text-sm font-semibold tracking-widest uppercase mb-3">Latest Updates</p>

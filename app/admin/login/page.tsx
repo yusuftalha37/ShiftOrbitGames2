@@ -26,7 +26,7 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 pt-20">
+    <div className="legacy-surface min-h-screen flex items-center justify-center px-6 pt-20">
       <form onSubmit={handleSubmit} className="glass rounded-2xl p-8 w-full max-w-sm space-y-5">
         <h1 className="text-2xl font-black text-white text-center mb-2">
           Admin <span className="shimmer-text">Login</span>

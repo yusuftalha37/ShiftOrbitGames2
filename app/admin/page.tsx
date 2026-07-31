@@ -19,11 +19,11 @@ export default function AdminDashboard() {
   }, [authLoading, user, router])
 
   if (authLoading || !user) {
-    return <div className="min-h-screen pt-32 text-center text-slate-500">Loading...</div>
+    return <div className="legacy-surface min-h-screen pt-32 text-center text-slate-500">Loading...</div>
   }
 
   return (
-    <div className="min-h-screen pt-28 pb-20 px-6">
+    <div className="legacy-surface min-h-screen pt-28 pb-20 px-6">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>

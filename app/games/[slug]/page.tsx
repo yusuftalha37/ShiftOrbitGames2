@@ -57,12 +57,12 @@ export default function GamePage({ params }: Props) {
   }, [slug])
 
   if (game === undefined) {
-    return <div className="min-h-screen pt-32 text-center text-slate-500">Loading...</div>
+    return <div className="legacy-surface min-h-screen pt-32 text-center text-slate-500">Loading...</div>
   }
 
   if (game === null) {
     return (
-      <div className="min-h-screen pt-32 text-center">
+      <div className="legacy-surface min-h-screen pt-32 text-center">
         <p className="text-slate-400 mb-6">Game not found.</p>
         <Link href="/" className="text-purple-400 hover:text-purple-300">← Back to Home</Link>
       </div>
@@ -75,7 +75,7 @@ export default function GamePage({ params }: Props) {
       : null
 
   return (
-    <div className="min-h-screen pt-20">
+    <div className="legacy-surface min-h-screen pt-20">
       {/* ─── HERO ────────────────────────────────────────────── */}
       <div className="relative h-[60vh] min-h-[420px] overflow-hidden">
         {game.coverImage ? (

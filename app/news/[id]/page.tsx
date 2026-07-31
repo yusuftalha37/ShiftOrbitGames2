@@ -44,12 +44,12 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
   }
 
   if (loading) {
-    return <div className="min-h-screen pt-32 text-center text-slate-500">Loading...</div>
+    return <div className="legacy-surface min-h-screen pt-32 text-center text-slate-500">Loading...</div>
   }
 
   if (!post) {
     return (
-      <div className="min-h-screen pt-32 text-center">
+      <div className="legacy-surface min-h-screen pt-32 text-center">
         <p className="text-slate-400 mb-6">Post not found.</p>
         <Link href="/news" className="text-purple-400 hover:text-purple-300">← Back to News</Link>
       </div>
@@ -57,7 +57,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
   }
 
   return (
-    <div className="min-h-screen pt-32 pb-20 px-6">
+    <div className="legacy-surface min-h-screen pt-32 pb-20 px-6">
       <div className="max-w-3xl mx-auto">
         <Link href="/news" className="text-sm text-slate-500 hover:text-purple-400 transition-colors mb-8 inline-block">
           ← Back to News
