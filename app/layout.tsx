@@ -4,6 +4,7 @@ import "./globals.css"
 import Header from "@/components/site/Header"
 import Footer from "@/components/site/Footer"
 import { AuthProvider } from "@/lib/auth-context"
+import { SettingsProvider } from "@/lib/settings-context"
 import { company } from "@/lib/site-content"
 
 const inter = Inter({
@@ -74,9 +75,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         <AuthProvider>
-          <Header />
-          <main id="main">{children}</main>
-          <Footer />
+          <SettingsProvider>
+            <Header />
+            <main id="main">{children}</main>
+            <Footer />
+          </SettingsProvider>
         </AuthProvider>
         <script
           type="application/ld+json"

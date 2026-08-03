@@ -1,6 +1,6 @@
 import Link from "next/link"
 import Logo from "./Logo"
-import SteamIcon from "./SteamIcon"
+import SocialLinks from "./SocialLinks"
 import { company, nav } from "@/lib/site-content"
 
 export default function Footer() {
@@ -23,15 +23,7 @@ export default function Footer() {
             </a>
           </p>
 
-          <a
-            href={company.steam}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-5 inline-flex items-center gap-2 rounded-lg border border-line-2 bg-paper px-3.5 py-2 text-[0.875rem] font-medium text-ink transition-colors hover:bg-surface-2"
-          >
-            <SteamIcon size={16} />
-            Shift Orbit on Steam
-          </a>
+          <SocialLinks className="-ml-2 mt-5" />
         </div>
 
         <nav aria-label="Footer">

@@ -171,3 +171,23 @@ site yalnızca Firestore'daki veriyi kullanır.
 Kategorilerin anahtarları (`leadership`, `art` gibi) Firestore'a yazıldığı için
 `lib/team.ts` içindeki mevcut anahtarları yeniden adlandırma — yeni kategori
 gerekiyorsa listeye ekle.
+
+## Sosyal medya linkleri
+
+Steam, Discord, YouTube, Instagram ve TikTok adresleri admin panelindeki
+**Settings** sekmesinden düzenlenir; Firestore'da `settings/social` dokümanında
+tutulur. Kaydettiğin adresler sitenin üst menüsünde (ikon olarak) ve footer'da
+görünür.
+
+- Bir alanı **boş bırakırsan** o platform siteden tamamen kaybolur.
+- Adres `https://` ile başlamalı; başlamıyorsa kaydetmeden önce uyarı çıkar.
+- `settings/social` dokümanı henüz yokken yalnızca `lib/site-content.ts`
+  içindeki Steam adresi gösterilir. Panelden ilk kaydı yaptığın anda
+  Firestore'daki değerler geçerli olur.
+
+Bu koleksiyon da `firestore.rules` içinde tanımlı (herkes okur, yalnızca
+adminler yazar), dolayısıyla kuralları yeniden yüklemen gerekir:
+
+```bash
+firebase deploy --only firestore:rules
+```
