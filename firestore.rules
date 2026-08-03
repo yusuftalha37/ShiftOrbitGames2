@@ -36,6 +36,11 @@ service cloud.firestore {
       }
     }
 
+    match /team/{memberId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // An account may check whether it is an admin, but never grant it.
     match /admins/{uid} {
       allow read: if request.auth != null && request.auth.uid == uid;

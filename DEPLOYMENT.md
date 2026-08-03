@@ -149,3 +149,25 @@ firebase deploy --only firestore:rules
 
 Alternatif olarak Firebase Console → Firestore Database → **Rules** sekmesine
 dosyanın içeriğini yapıştırıp **Publish** diyebilirsin.
+
+## Ekip üyeleri
+
+Ekip üyeleri admin panelindeki **Team** sekmesinden yönetilir ve Firestore'daki
+`team` koleksiyonunda tutulur. Her üyenin bir **kategorisi** vardır:
+
+`Leadership · Development · Art · Design · Audio & music · Production · Other`
+
+Üyeler `/team` sayfasında bu kategorilere göre gruplanır; ziyaretçi üstteki
+filtre düğmeleriyle tek bir kategoriye odaklanabilir. Ana sayfadaki ekip
+bölümünde ilk 6 üye görünür, 6'dan fazlaysa "All team members" linki çıkar.
+
+### Başlangıç listesi hakkında
+
+`team` koleksiyonu boşken site, `lib/data.ts` içindeki sabit listeyi gösterir.
+Bu, panele ilk üye eklenene kadar ekip bölümünün boş görünmemesi içindir.
+**Panelden ilk üyeyi eklediğin anda sabit liste tamamen devre dışı kalır** ve
+site yalnızca Firestore'daki veriyi kullanır.
+
+Kategorilerin anahtarları (`leadership`, `art` gibi) Firestore'a yazıldığı için
+`lib/team.ts` içindeki mevcut anahtarları yeniden adlandırma — yeni kategori
+gerekiyorsa listeye ekle.

@@ -6,14 +6,16 @@ import { auth } from "@/lib/firebase"
 import { useAuth } from "@/lib/auth-context"
 import NewsManager from "@/components/admin/NewsManager"
 import GameManager from "@/components/admin/GameManager"
+import TeamManager from "@/components/admin/TeamManager"
 import Overview from "@/components/admin/Overview"
 
-type Tab = "overview" | "games" | "news"
+type Tab = "overview" | "games" | "news" | "team"
 
 const TABS: { key: Tab; label: string }[] = [
   { key: "overview", label: "Overview" },
   { key: "games", label: "Games" },
   { key: "news", label: "News" },
+  { key: "team", label: "Team" },
 ]
 
 export default function AdminDashboard() {
@@ -128,6 +130,7 @@ export default function AdminDashboard() {
         {tab === "overview" && <Overview onNavigate={setTab} />}
         {tab === "games" && <GameManager />}
         {tab === "news" && <NewsManager />}
+        {tab === "team" && <TeamManager />}
       </div>
     </div>
   )

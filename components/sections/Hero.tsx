@@ -3,22 +3,26 @@
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { hero, company } from "@/lib/site-content"
-import { team } from "@/lib/data"
 import { getAllGames } from "@/lib/games"
+import { getAllMembers } from "@/lib/team"
 import Reveal from "@/components/site/Reveal"
 
 export default function Hero() {
   const [gameCount, setGameCount] = useState<number | null>(null)
+  const [teamCount, setTeamCount] = useState<number | null>(null)
 
   useEffect(() => {
     getAllGames()
       .then((g) => setGameCount(g.length))
       .catch(() => setGameCount(null))
+    getAllMembers()
+      .then((m) => setTeamCount(m.length))
+      .catch(() => setTeamCount(null))
   }, [])
 
   const stats = [
     { value: gameCount === null ? "—" : String(gameCount), label: "Games" },
-    { value: String(team.length), label: "Team members" },
+    { value: teamCount === null ? "—" : String(teamCount), label: "Team members" },
     { value: String(company.founded), label: "Founded" },
   ]
 

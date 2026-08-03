@@ -14,7 +14,7 @@ export const company = {
 export const nav = [
   { href: "/#games", label: "Games" },
   { href: "/news", label: "News" },
-  { href: "/#team", label: "Team" },
+  { href: "/team", label: "Team" },
   { href: "/#contact", label: "Contact" },
 ]
 
