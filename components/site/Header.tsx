@@ -3,7 +3,8 @@
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import Logo from "./Logo"
-import { nav } from "@/lib/site-content"
+import SteamIcon from "./SteamIcon"
+import { nav, company } from "@/lib/site-content"
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false)
@@ -56,7 +57,17 @@ export default function Header() {
           </ul>
         </nav>
 
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-3 md:flex">
+          <a
+            href={company.steam}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-md text-ink-2 transition-colors hover:bg-surface hover:text-ink"
+            title="Shift Orbit on Steam"
+          >
+            <SteamIcon size={17} />
+            <span className="sr-only">Shift Orbit on Steam</span>
+          </a>
           <Link href="/#contact" className="btn btn-primary btn-sm">
             Get in touch
           </Link>
@@ -106,6 +117,15 @@ export default function Header() {
                 </li>
               ))}
             </ul>
+            <a
+              href={company.steam}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 py-3.5 text-[0.9375rem] text-ink"
+            >
+              <SteamIcon size={15} />
+              Steam
+            </a>
             <Link
               href="/#contact"
               onClick={() => setOpen(false)}

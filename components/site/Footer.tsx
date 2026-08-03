@@ -1,5 +1,6 @@
 import Link from "next/link"
 import Logo from "./Logo"
+import SteamIcon from "./SteamIcon"
 import { company, nav } from "@/lib/site-content"
 
 export default function Footer() {
@@ -21,6 +22,16 @@ export default function Footer() {
               {company.email}
             </a>
           </p>
+
+          <a
+            href={company.steam}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-5 inline-flex items-center gap-2 rounded-lg border border-line-2 bg-paper px-3.5 py-2 text-[0.875rem] font-medium text-ink transition-colors hover:bg-surface-2"
+          >
+            <SteamIcon size={16} />
+            Our games on Steam
+          </a>
         </div>
 
         <nav aria-label="Footer">
