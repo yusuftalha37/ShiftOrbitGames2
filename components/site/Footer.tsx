@@ -30,7 +30,7 @@ export default function Footer() {
             className="mt-5 inline-flex items-center gap-2 rounded-lg border border-line-2 bg-paper px-3.5 py-2 text-[0.875rem] font-medium text-ink transition-colors hover:bg-surface-2"
           >
             <SteamIcon size={16} />
-            Our games on Steam
+            Shift Orbit on Steam
           </a>
         </div>
 

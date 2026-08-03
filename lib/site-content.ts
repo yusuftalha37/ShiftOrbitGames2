@@ -9,8 +9,7 @@ export const company = {
   tagline: "Independent game studio",
   founded: 2024,
   email: "hello@shiftorbit.com",
-  /** PLACEHOLDER — replace with the studio's real Steam publisher page. */
-  steam: "https://store.steampowered.com/publisher/shiftorbit",
+  steam: "https://store.steampowered.com/curator/45313222",
 }
 
 export const nav = [
