@@ -5,6 +5,7 @@ import Link from "next/link"
 import { getPost, getComments, addComment, NewsPost, Comment } from "@/lib/news"
 import { getGameBySlug, Game } from "@/lib/games"
 import { formatDate, readingTime } from "@/lib/format"
+import { sanitizeHtml } from "@/lib/sanitize"
 
 export default function NewsDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -95,7 +96,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
         )}
         <div
           className="prose-content mb-16 text-ink-2"
-          dangerouslySetInnerHTML={{ __html: post.content }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content) }}
         />
 
         {/* Comments */}

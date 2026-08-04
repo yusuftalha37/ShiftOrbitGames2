@@ -12,6 +12,7 @@ import {
   type TeamMember,
 } from "@/lib/team"
 import ImageUrlInput from "@/components/ImageUrlInput"
+import { isSafeUrl } from "@/lib/sanitize"
 
 const inputClass =
   "w-full rounded-lg border border-line-2 bg-paper px-3.5 py-2.5 text-[0.9375rem] text-ink placeholder:text-ink-3/70 transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
@@ -76,6 +77,16 @@ export default function TeamManager() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!form.name.trim() || !form.role.trim()) return
+
+    // Links go straight into href on the public site; only web addresses.
+    const badLink = [form.linkedin, form.customLink].find(
+      (v) => v.trim() && !isSafeUrl(v),
+    )
+    if (badLink) {
+      setError("Links must be full web addresses starting with https://")
+      return
+    }
+
     setSubmitting(true)
     setError("")
     try {
