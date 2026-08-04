@@ -74,9 +74,6 @@ export default function Hero() {
           aria-hidden="true"
         />
         <div className="relative z-10 max-w-3xl text-center">
-          <div className="relative mx-auto mb-8 h-28 w-28">
-            <Image src="/logo.png" alt="" fill sizes="112px" className="object-contain" priority />
-          </div>
           <p className="eyebrow">{c.hero.eyebrow}</p>
           <h1
             id="hero-heading"
