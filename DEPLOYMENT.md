@@ -22,28 +22,76 @@ Kod zaten GitHub'da: **github.com/yusuftalha37/ShiftOrbitGames2** (`main` dalı)
 
 ## 2. Ortam değişkenlerini gir
 
-Vercel'de **Settings → Environment Variables**. Değerleri Firebase Console →
-**Project settings → Your apps → SDK setup and configuration** ekranından
-kopyala. Hepsini Production, Preview ve Development için ekle:
+Bu adım, siteye **hangi Firebase projesine bağlanacağını** söyler. Girilmezse
+site açılır ama oyunlar, haberler ve giriş çalışmaz.
 
-| Değişken | Değer |
+### 2a. Değerleri Firebase'den al
+
+Firebase Console → sol üstteki **⚙ (dişli) → Project settings** → **General**
+sekmesi → sayfayı aşağı kaydır → **Your apps** bölümü → web uygulaman →
+**SDK setup and configuration** → **Config** seçeneği.
+
+Karşına şuna benzer bir blok çıkar:
+
+```js
+const firebaseConfig = {
+  apiKey: "AIzaSyD-ornek-anahtar",
+  authDomain: "shiftorbit.firebaseapp.com",
+  projectId: "shiftorbit",
+  storageBucket: "shiftorbit.appspot.com",
+  messagingSenderId: "123456789012",
+  appId: "1:123456789012:web:abc123def456"
+};
+```
+
+> **Web uygulaman yoksa** (Your apps boşsa): **Add app → Web (`</>`)** de,
+> bir takma ad yaz, **Register app**. Config bloğu hemen ardından görünür.
+
+### 2b. Vercel'e gir
+
+Vercel'de proje → **Settings** → **Environment Variables**. Her satır için
+**Key** ve **Value** alanlarını doldurup **Save**'e bas. Karşılıklar:
+
+| Vercel'deki Key (Name) | Value — Firebase config'teki karşılığı |
 | --- | --- |
-| `NEXT_PUBLIC_FIREBASE_API_KEY` | Firebase config'ten |
-| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Firebase config'ten |
-| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Firebase config'ten |
-| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | Firebase config'ten |
-| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | Firebase config'ten |
-| `NEXT_PUBLIC_FIREBASE_APP_ID` | Firebase config'ten |
+| `NEXT_PUBLIC_FIREBASE_API_KEY` | `apiKey` değeri |
+| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | `authDomain` değeri |
+| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | `projectId` değeri |
+| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | `storageBucket` değeri |
+| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | `messagingSenderId` değeri |
+| `NEXT_PUBLIC_FIREBASE_APP_ID` | `appId` değeri |
 | `NEXT_PUBLIC_SITE_URL` | Kendi domainin, örn. `https://shiftorbit.com` |
 
-`NEXT_PUBLIC_SITE_URL` girilmezse paylaşım kartları ve canonical adresler
-`localhost` kalır. Sonra eklersen **yeniden deploy** etmen gerekir.
+Değerleri **tırnaksız** yapıştır: `AIzaSyD-ornek` ✅ &nbsp; `"AIzaSyD-ornek"` ❌
 
-Bunlar tarayıcıya gönderilen açık anahtarlardır (`NEXT_PUBLIC_` ön eki bunu
-belirtir); gizli olmaları beklenmez. Projeyi asıl koruyan şey Firestore
-kurallarıdır — adım 5.
+Her değişken için **Production, Preview ve Development**'ın üçünü de işaretle.
 
-Şimdi **Deploy**'a bas.
+### Kısayol: hepsini tek seferde yapıştır
+
+Vercel'in Environment Variables ekranı toplu yapıştırmayı destekler. Aşağıdaki
+gibi bir metni doğrudan **Key** kutusuna yapıştırırsan satırları kendisi ayırır:
+
+```
+NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyD-ornek-anahtar
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=shiftorbit.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=shiftorbit
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=shiftorbit.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789012
+NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789012:web:abc123def456
+NEXT_PUBLIC_SITE_URL=https://shiftorbit.com
+```
+
+Bilgisayarında çalışan bir `.env.local` dosyan varsa içeriğini olduğu gibi
+yapıştırabilirsin — biçim aynıdır.
+
+### Bu anahtarlar gizli mi?
+
+Hayır. `NEXT_PUBLIC_` ön eki "tarayıcıya gönderilir" demektir; Firebase'in web
+anahtarları zaten herkese açıktır ve öyle olmaları normaldir. Projeni koruyan
+şey bu anahtarlar değil, **5. adımdaki güvenlik kurallarıdır**.
+
+Değişkenleri girdikten sonra **Deploy**'a bas. Sonradan bir değişken eklersen
+veya değiştirirsen **yeniden deploy etmen gerekir** (Deployments → ⋯ → Redeploy).
 
 ## 3. Domaini bağla
 
