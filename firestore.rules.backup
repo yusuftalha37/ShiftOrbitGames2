@@ -13,9 +13,6 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // Reading .blocked directly raises "property is undefined" on the many
-    // user documents that have no such field, which fails the whole rule and
-    // locks admins out. get(key, default) keeps the check total.
     function isBlocked() {
       return signedIn()
         && exists(/databases/$(database)/documents/users/$(request.auth.uid))
@@ -23,8 +20,6 @@ service cloud.firestore {
              .data.get("blocked", false) == true;
     }
 
-    // Day number in UTC, used to bind a message document to the day it was
-    // written so the one-a-day limit cannot be sidestepped by choosing an id.
     function dayId() {
       return string(int(request.time.toMillis() / 86400000));
     }
@@ -45,16 +40,18 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAdmin();
 
-      // Visitors may leave comments; only admins can moderate them.
+      // Yorum bırakmak için giriş yapılmış olmalı + engellenmiş olmamalı.
       match /comments/{commentId} {
         allow read: if true;
-        allow create: if !isBlocked()
+        allow create: if signedIn()
+          && !isBlocked()
           && request.resource.data.name is string
           && request.resource.data.name.size() > 0
           && request.resource.data.name.size() <= 40
           && request.resource.data.message is string
           && request.resource.data.message.size() > 0
-          && request.resource.data.message.size() <= 1000;
+          && request.resource.data.message.size() <= 1000
+          && request.resource.data.uid == request.auth.uid;
         allow update, delete: if isAdmin();
       }
     }
@@ -64,13 +61,12 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // Site settings such as social links: public to read, admin to change.
     match /settings/{docId} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
-    // Contact messages: one per account per day, readable only by admins.
+    // Contact messages: one per account per day.
     match /messages/{messageId} {
       allow get: if isAdmin()
         || (signedIn() && messageId == request.auth.uid + "_" + dayId());
@@ -88,17 +84,14 @@ service cloud.firestore {
         && request.resource.data.message.size() <= 2000
         && request.resource.data.createdAt == request.time;
 
-      // A sent message is a record; it is never edited, only removed.
       allow update: if false;
       allow delete: if isAdmin();
     }
 
-    // The account directory the admin panel lists.
     match /users/{uid} {
       allow read: if isAdmin() || (signedIn() && request.auth.uid == uid);
       allow list: if isAdmin();
 
-      // People record their own sign-in but must never set their own flags.
       allow create: if signedIn()
         && request.auth.uid == uid
         && !("blocked" in request.resource.data);
@@ -110,14 +103,12 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // An account may check whether it is an admin; only admins may grant it.
     match /admins/{uid} {
       allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
       allow list: if isAdmin();
       allow write: if isAdmin();
     }
 
-    // Anything not matched above is closed.
     match /{document=**} {
       allow read, write: if false;
     }

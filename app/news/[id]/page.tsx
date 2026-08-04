@@ -6,9 +6,13 @@ import { getPost, getComments, addComment, NewsPost, Comment } from "@/lib/news"
 import { getGameBySlug, Game } from "@/lib/games"
 import { formatDate, readingTime } from "@/lib/format"
 import { sanitizeHtml } from "@/lib/sanitize"
+import { useAuth } from "@/lib/auth-context"
+import { useContent } from "@/lib/i18n-context"
 
 export default function NewsDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
+  const { user } = useAuth()
+  const c = useContent()
   const [post, setPost] = useState<NewsPost | null>(null)
   const [comments, setComments] = useState<Comment[]>([])
   const [linkedGame, setLinkedGame] = useState<Game | null>(null)
@@ -33,10 +37,10 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!name.trim() || !message.trim()) return
+    if (!user || !name.trim() || !message.trim()) return
     setSubmitting(true)
     try {
-      await addComment(id, { name: name.trim(), message: message.trim() })
+      await addComment(id, { name: name.trim(), message: message.trim(), uid: user.uid })
       setName("")
       setMessage("")
       await loadComments()
@@ -105,37 +109,48 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
             Comments ({comments.length})
           </h2>
 
-          <form onSubmit={handleSubmit} className="card mb-8 space-y-4 p-6">
-            <div>
-              <label htmlFor="comment-name" className="block text-[0.8125rem] font-medium text-ink">
-                Name
-              </label>
-              <input
-                id="comment-name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                maxLength={40}
-                className="mt-2 w-full rounded-lg border border-line-2 bg-paper px-3.5 py-2.5 text-[0.9375rem] text-ink transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
-              />
+          {user ? (
+            <form onSubmit={handleSubmit} className="card mb-8 space-y-4 p-6">
+              <div>
+                <label htmlFor="comment-name" className="block text-[0.8125rem] font-medium text-ink">
+                  Name
+                </label>
+                <input
+                  id="comment-name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  maxLength={40}
+                  className="mt-2 w-full rounded-lg border border-line-2 bg-paper px-3.5 py-2.5 text-[0.9375rem] text-ink transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+                />
+              </div>
+              <div>
+                <label htmlFor="comment-message" className="block text-[0.8125rem] font-medium text-ink">
+                  Comment
+                </label>
+                <textarea
+                  id="comment-message"
+                  rows={4}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  maxLength={1000}
+                  className="mt-2 w-full resize-y rounded-lg border border-line-2 bg-paper px-3.5 py-2.5 text-[0.9375rem] text-ink transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+                />
+              </div>
+              <button type="submit" disabled={submitting} className="btn btn-primary">
+                {submitting ? "Posting…" : "Post comment"}
+              </button>
+            </form>
+          ) : (
+            <div className="card mb-8 p-6">
+              <p className="text-[0.9375rem] text-ink-2">
+                Sign in to leave a comment.
+              </p>
+              <Link href="/admin/login" className="btn btn-primary mt-4 inline-block">
+                {c.account.signIn}
+              </Link>
             </div>
-            <div>
-              <label htmlFor="comment-message" className="block text-[0.8125rem] font-medium text-ink">
-                Comment
-              </label>
-              <textarea
-                id="comment-message"
-                rows={4}
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                maxLength={1000}
-                className="mt-2 w-full resize-y rounded-lg border border-line-2 bg-paper px-3.5 py-2.5 text-[0.9375rem] text-ink transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
-              />
-            </div>
-            <button type="submit" disabled={submitting} className="btn btn-primary">
-              {submitting ? "Posting…" : "Post comment"}
-            </button>
-          </form>
+          )}
 
           <div className="space-y-4">
             {comments.length === 0 && (

@@ -80,6 +80,6 @@ export async function getComments(postId: string): Promise<Comment[]> {
   return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Comment, "id">) }))
 }
 
-export async function addComment(postId: string, data: { name: string; message: string }) {
+export async function addComment(postId: string, data: { name: string; message: string; uid: string }) {
   await addDoc(collection(db, "posts", postId, "comments"), { ...data, createdAt: serverTimestamp() })
 }
