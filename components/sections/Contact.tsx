@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, type FormEvent } from "react"
-import { company, contact } from "@/lib/site-content"
+import { company } from "@/lib/site-content"
+import { useContent } from "@/lib/i18n-context"
 
 const fieldClass =
   "mt-2 w-full rounded-lg border border-line-2 bg-paper px-3.5 py-2.5 text-[0.9375rem] text-ink placeholder:text-ink-3/70 transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
@@ -12,6 +13,7 @@ type Status = "idle" | "sending" | "sent" | "error"
 
 export default function Contact() {
   const [status, setStatus] = useState<Status>("idle")
+  const c = useContent()
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -53,14 +55,14 @@ export default function Contact() {
     <section id="contact" className="section" aria-labelledby="contact-heading">
       <div className="container-page grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
         <div className="lg:col-span-5">
-          <p className="eyebrow">{contact.eyebrow}</p>
+          <p className="eyebrow">{c.contact.eyebrow}</p>
           <h2 id="contact-heading" className="display mt-4 text-[clamp(1.75rem,4vw,2.75rem)]">
-            {contact.heading}
+            {c.contact.heading}
           </h2>
-          <p className="lead mt-5 max-w-[46ch]">{contact.body}</p>
+          <p className="lead mt-5 max-w-[46ch]">{c.contact.body}</p>
 
           <p className="mt-8 border-t border-line pt-8 text-[0.9375rem] text-ink-2">
-            Or email us directly at{" "}
+            {c.contact.orEmail}{" "}
             <a href={`mailto:${company.email}`} className="link-accent">
               {company.email}
             </a>
@@ -72,7 +74,7 @@ export default function Contact() {
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div>
                 <label htmlFor="name" className={labelClass}>
-                  Name
+                  {c.contact.name}
                 </label>
                 <input
                   id="name"
@@ -85,7 +87,7 @@ export default function Contact() {
               </div>
               <div>
                 <label htmlFor="email" className={labelClass}>
-                  Email
+                  {c.contact.email}
                 </label>
                 <input
                   id="email"
@@ -100,7 +102,7 @@ export default function Contact() {
 
             <div className="mt-5">
               <label htmlFor="message" className={labelClass}>
-                Message
+                {c.contact.message}
               </label>
               <textarea
                 id="message"
@@ -123,19 +125,17 @@ export default function Contact() {
                 className="btn btn-primary"
                 disabled={status === "sending"}
               >
-                {status === "sending" ? "Sending…" : "Send message"}
+                {status === "sending" ? c.contact.sending : c.contact.send}
               </button>
             </div>
 
             <p role="status" aria-live="polite" className="mt-4 text-[0.875rem]">
               {status === "sent" && (
-                <span className="text-positive">
-                  Thank you — your message is on its way.
-                </span>
+                <span className="text-positive">{c.contact.sent}</span>
               )}
               {status === "error" && (
                 <span className="text-ink-2">
-                  Something went wrong sending the form. Please email us at{" "}
+                  {c.contact.error}{" "}
                   <a href={`mailto:${company.email}`} className="link-accent">
                     {company.email}
                   </a>

@@ -4,20 +4,25 @@ import Link from "next/link"
 import Image from "next/image"
 import { getAllPosts, NewsPost } from "@/lib/news"
 import { excerpt, formatDate, readingTime } from "@/lib/format"
+import { useContent } from "@/lib/i18n-context"
 
 function Meta({ post }: { post: NewsPost }) {
+  const c = useContent()
   return (
     <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.75rem] text-ink-3">
       <span>{formatDate(post.createdAt)}</span>
       <span aria-hidden="true">·</span>
       <span>{post.author}</span>
       <span aria-hidden="true">·</span>
-      <span>{readingTime(post.content)} min read</span>
+      <span>
+        {readingTime(post.content)} {c.common.minRead}
+      </span>
     </p>
   )
 }
 
 function FeaturedPost({ post }: { post: NewsPost }) {
+  const c = useContent()
   const hasCover = post.coverImage && /^(\/|https?:\/\/)/.test(post.coverImage)
 
   return (
@@ -38,7 +43,7 @@ function FeaturedPost({ post }: { post: NewsPost }) {
 
         <div className={`flex flex-col justify-center p-6 sm:p-8 ${hasCover ? "" : "lg:col-span-2"}`}>
           <span className="text-[0.6875rem] font-semibold uppercase tracking-[0.09em] text-accent">
-            Latest
+            {c.news.latest}
           </span>
           <h2 className="mt-3 text-[1.5rem] font-semibold leading-tight tracking-[-0.02em] transition-colors group-hover:text-accent">
             {post.title}
@@ -93,6 +98,7 @@ export default function NewsPage() {
   const [posts, setPosts] = useState<NewsPost[]>([])
   const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState("")
+  const c = useContent()
 
   useEffect(() => {
     getAllPosts()
@@ -118,25 +124,24 @@ export default function NewsPage() {
       <div className="container-page">
         <header className="flex flex-wrap items-end justify-between gap-x-8 gap-y-6">
           <div className="max-w-[52ch]">
-            <p className="eyebrow">Latest updates</p>
-            <h1 className="display mt-4 text-[clamp(1.75rem,4vw,2.75rem)]">News &amp; blog</h1>
+            <p className="eyebrow">{c.news.eyebrow}</p>
+            <h1 className="display mt-4 text-[clamp(1.75rem,4vw,2.75rem)]">{c.news.heading}</h1>
             <p className="lead mt-5">
-              Development updates, announcements, and stories from the Shift
-              Orbit team.
+{c.news.body}
             </p>
           </div>
 
           {posts.length > 3 && (
             <div className="w-full sm:w-64">
               <label htmlFor="news-search" className="sr-only">
-                Search posts
+                {c.news.search}
               </label>
               <input
                 id="news-search"
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search posts"
+                placeholder={c.news.search}
                 className="w-full rounded-lg border border-line-2 bg-paper px-3.5 py-2.5 text-[0.9375rem] text-ink placeholder:text-ink-3/70 transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
               />
             </div>
@@ -145,21 +150,20 @@ export default function NewsPage() {
 
         <div className="mt-12" aria-busy={loading}>
           {loading ? (
-            <p className="text-[0.9375rem] text-ink-3">Loading…</p>
+            <p className="text-[0.9375rem] text-ink-3">{c.common.loading}</p>
           ) : posts.length === 0 ? (
             <div className="card px-6 py-14 text-center">
-              <p className="text-[1.0625rem] font-medium">No posts yet</p>
+              <p className="text-[1.0625rem] font-medium">{c.news.emptyTitle}</p>
               <p className="mx-auto mt-2 max-w-[42ch] text-[0.9375rem] leading-relaxed text-ink-2">
-                Development updates will show up here as our games come
-                together.
+{c.news.emptyBody}
               </p>
               <Link href="/#games" className="btn btn-secondary mt-6">
-                See our games
+                {c.news.emptyCta}
               </Link>
             </div>
           ) : visible.length === 0 ? (
             <p className="text-[0.9375rem] text-ink-3">
-              No posts match “{query}”.
+{c.news.noMatch(query)}
             </p>
           ) : (
             <div className="space-y-6">

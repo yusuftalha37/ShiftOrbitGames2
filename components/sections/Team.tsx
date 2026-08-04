@@ -3,13 +3,14 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { getAllMembers, type TeamMember } from "@/lib/team"
-import { team as copy } from "@/lib/site-content"
+import { useContent } from "@/lib/i18n-context"
 import Reveal from "@/components/site/Reveal"
 import MemberCard from "@/components/site/MemberCard"
 
 export default function Team() {
   const [members, setMembers] = useState<TeamMember[]>([])
   const [loading, setLoading] = useState(true)
+  const c = useContent()
 
   useEffect(() => {
     getAllMembers()
@@ -26,22 +27,22 @@ export default function Team() {
         <Reveal>
           <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
             <div>
-              <p className="eyebrow">{copy.eyebrow}</p>
+              <p className="eyebrow">{c.team.eyebrow}</p>
               <h2 id="team-heading" className="display mt-4 text-[clamp(1.75rem,4vw,2.75rem)]">
-                {copy.heading}
+                {c.team.heading}
               </h2>
-              <p className="lead mt-5 max-w-[52ch]">{copy.body}</p>
+              <p className="lead mt-5 max-w-[52ch]">{c.team.body}</p>
             </div>
             {members.length > 6 && (
               <Link href="/team" className="link-accent text-[0.9375rem]">
-                All team members →
+                {c.team.allMembers} →
               </Link>
             )}
           </div>
         </Reveal>
 
         {loading ? (
-          <p className="mt-12 text-[0.9375rem] text-ink-3">Loading…</p>
+          <p className="mt-12 text-[0.9375rem] text-ink-3">{c.common.loading}</p>
         ) : (
           <ul className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {members.slice(0, 6).map((member, i) => (

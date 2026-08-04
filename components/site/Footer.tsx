@@ -1,10 +1,14 @@
+"use client"
+
 import Link from "next/link"
 import Logo from "./Logo"
 import SocialLinks from "./SocialLinks"
-import { company, nav } from "@/lib/site-content"
+import { company, navHrefs } from "@/lib/site-content"
+import { useContent } from "@/lib/i18n-context"
 
 export default function Footer() {
   const year = new Date().getFullYear()
+  const c = useContent()
 
   return (
     <footer className="border-t border-line bg-surface">
@@ -14,8 +18,7 @@ export default function Footer() {
             <Logo />
           </Link>
           <p className="mt-4 max-w-[38ch] text-[0.875rem] leading-relaxed text-ink-2">
-            An independent game studio building bold, universe-scale gaming
-            experiences. Every orbit begins with a single shift.
+{c.footer.description}
           </p>
           <p className="mt-4 text-[0.875rem]">
             <a href={`mailto:${company.email}`} className="link-accent">
@@ -28,16 +31,16 @@ export default function Footer() {
 
         <nav aria-label="Footer">
           <h2 className="text-[0.6875rem] font-semibold uppercase tracking-[0.09em] text-ink-3">
-            Navigate
+            {c.footer.navigate}
           </h2>
           <ul className="mt-4 space-y-2.5 text-[0.875rem]">
-            {nav.map((item) => (
-              <li key={item.href}>
+            {navHrefs.map((href, i) => (
+              <li key={href}>
                 <Link
-                  href={item.href}
+                  href={href}
                   className="text-ink-2 transition-colors hover:text-ink"
                 >
-                  {item.label}
+                  {c.nav[i]}
                 </Link>
               </li>
             ))}
@@ -51,7 +54,7 @@ export default function Footer() {
             © {year} {company.name}
           </p>
           <Link href="/admin" className="transition-colors hover:text-ink">
-            Admin
+            {c.footer.admin}
           </Link>
         </div>
       </div>

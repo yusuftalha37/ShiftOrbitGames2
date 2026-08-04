@@ -6,10 +6,12 @@ import Image from "next/image"
 import { getAllPosts, type NewsPost } from "@/lib/news"
 import { excerpt, formatDate, readingTime } from "@/lib/format"
 import Reveal from "@/components/site/Reveal"
+import { useContent } from "@/lib/i18n-context"
 
 export default function News() {
   const [posts, setPosts] = useState<NewsPost[]>([])
   const [loading, setLoading] = useState(true)
+  const c = useContent()
 
   useEffect(() => {
     getAllPosts()
@@ -27,13 +29,13 @@ export default function News() {
         <Reveal>
           <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
             <div>
-              <p className="eyebrow">From the studio</p>
+              <p className="eyebrow">{c.news.sectionEyebrow}</p>
               <h2 id="news-heading" className="display mt-4 text-[clamp(1.75rem,4vw,2.75rem)]">
-                Latest news
+                {c.news.sectionHeading}
               </h2>
             </div>
             <Link href="/news" className="link-accent text-[0.9375rem]">
-              All posts →
+              {c.common.allPosts} →
             </Link>
           </div>
         </Reveal>
@@ -70,7 +72,7 @@ export default function News() {
                       </p>
                       <p className="mt-auto pt-4 text-[0.75rem] text-ink-3">
                         {formatDate(post.createdAt, "short")} ·{" "}
-                        {readingTime(post.content)} min read
+                        {readingTime(post.content)} {c.common.minRead}
                       </p>
                     </div>
                   </Link>

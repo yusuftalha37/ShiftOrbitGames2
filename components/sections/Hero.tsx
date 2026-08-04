@@ -3,17 +3,11 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useCallback, useEffect, useRef, useState } from "react"
-import { hero } from "@/lib/site-content"
+import { useContent } from "@/lib/i18n-context"
 import { getAllGames, type Game } from "@/lib/games"
 import { useSocialLinks } from "@/lib/settings-context"
 
 const AUTOPLAY_MS = 7000
-
-const STATUS_LINE: Record<Game["status"], string> = {
-  released: "Out now on Steam",
-  "coming-soon": "Coming soon",
-  "in-development": "In development",
-}
 
 function Arrow({ dir }: { dir: "prev" | "next" }) {
   return (
@@ -36,6 +30,7 @@ export default function Hero() {
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
   const links = useSocialLinks()
+  const c = useContent()
   const touchStart = useRef<number | null>(null)
 
   useEffect(() => {
@@ -82,17 +77,17 @@ export default function Hero() {
           <div className="relative mx-auto mb-8 h-28 w-28">
             <Image src="/logo.png" alt="" fill sizes="112px" className="object-contain" priority />
           </div>
-          <p className="eyebrow">{hero.eyebrow}</p>
+          <p className="eyebrow">{c.hero.eyebrow}</p>
           <h1
             id="hero-heading"
             className="display mt-5 text-[clamp(2.25rem,6.5vw,4.5rem)] text-balance"
           >
-            {hero.heading}
+            {c.hero.heading}
           </h1>
-          <p className="lead mx-auto mt-6 max-w-[46ch]">{hero.body}</p>
+          <p className="lead mx-auto mt-6 max-w-[46ch]">{c.hero.body}</p>
           <div className="mt-9 flex flex-wrap justify-center gap-3">
-            <a href={hero.primaryCta.href} className="btn btn-primary">
-              {hero.primaryCta.label}
+            <a href="#games" className="btn btn-primary">
+              {c.hero.primaryCta}
             </a>
             {links.steam && (
               <a
@@ -101,7 +96,7 @@ export default function Hero() {
                 rel="noopener noreferrer"
                 className="btn btn-secondary"
               >
-                Visit us on Steam
+                {c.hero.visitSteam}
               </a>
             )}
           </div>
@@ -116,7 +111,7 @@ export default function Hero() {
     <section
       className="relative -mt-[4.5rem] min-h-[88vh] overflow-hidden bg-surface"
       aria-roledescription="carousel"
-      aria-label="Our games"
+      aria-label={c.hero.carouselLabel}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -167,7 +162,7 @@ export default function Hero() {
             </h1>
 
             <p className="mt-4 text-[clamp(1rem,2vw,1.375rem)] font-semibold text-accent">
-              {STATUS_LINE[current.status]}
+              {c.hero.status[current.status]}
             </p>
 
             {current.shortDescription && (
@@ -184,15 +179,15 @@ export default function Hero() {
                   rel="noopener noreferrer"
                   className="btn btn-primary"
                 >
-                  {current.status === "released" ? "Buy now" : "Wishlist"} →
+                  {current.status === "released" ? c.hero.buyNow : c.hero.wishlist} →
                 </a>
               ) : (
                 <Link href={`/games/${current.slug}`} className="btn btn-primary">
-                  View game →
+                  {c.common.viewGame} →
                 </Link>
               )}
               <Link href={`/games/${current.slug}`} className="btn btn-secondary">
-                Learn more
+                {c.common.learnMore}
               </Link>
             </div>
           </div>
@@ -221,7 +216,7 @@ export default function Hero() {
           <button
             type="button"
             onClick={() => go(index - 1)}
-            aria-label="Previous game"
+            aria-label={c.hero.prevSlide}
             className="absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full p-3 text-white/70 transition-colors hover:bg-white/10 hover:text-white sm:left-5"
           >
             <Arrow dir="prev" />
@@ -229,7 +224,7 @@ export default function Hero() {
           <button
             type="button"
             onClick={() => go(index + 1)}
-            aria-label="Next game"
+            aria-label={c.hero.nextSlide}
             className="absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full p-3 text-white/70 transition-colors hover:bg-white/10 hover:text-white sm:right-5"
           >
             <Arrow dir="next" />

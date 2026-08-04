@@ -4,11 +4,14 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import Logo from "./Logo"
 import SocialLinks from "./SocialLinks"
-import { nav } from "@/lib/site-content"
+import LanguageSwitcher from "./LanguageSwitcher"
+import { navHrefs } from "@/lib/site-content"
+import { useContent } from "@/lib/i18n-context"
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  const c = useContent()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -33,62 +36,65 @@ export default function Header() {
 
   return (
     <>
-    <header
-      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
-        scrolled || open
-          ? "border-b border-line bg-paper/95 backdrop-blur-md"
-          : "border-b border-transparent bg-gradient-to-b from-black/70 to-transparent"
-      }`}
-    >
-      <div className="relative flex h-[4.5rem] items-center justify-between gap-4 px-4 sm:px-6">
-        {/* Left — menu */}
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          className="inline-flex h-11 w-11 items-center justify-center rounded-md text-ink transition-colors hover:bg-white/10"
-          aria-expanded={open}
-          aria-controls="site-menu"
-          aria-label={open ? "Close menu" : "Open menu"}
-        >
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-            {open ? (
-              <path
-                d="M5 5l12 12M17 5L5 17"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-              />
-            ) : (
-              <path
-                d="M3 6h16M3 11h16M3 16h16"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-              />
-            )}
-          </svg>
-        </button>
+      <header
+        className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
+          scrolled || open
+            ? "border-b border-line bg-paper/95 backdrop-blur-md"
+            : "border-b border-transparent bg-gradient-to-b from-black/70 to-transparent"
+        }`}
+      >
+        <div className="relative flex h-[4.5rem] items-center justify-between gap-4 px-4 sm:px-6">
+          {/* Left — menu and language */}
+          <div className="flex items-center gap-1 sm:gap-2">
+            <button
+              type="button"
+              onClick={() => setOpen((v) => !v)}
+              className="inline-flex h-11 w-11 items-center justify-center rounded-md text-ink transition-colors hover:bg-white/10"
+              aria-expanded={open}
+              aria-controls="site-menu"
+              aria-label={open ? c.common.closeMenu : c.common.openMenu}
+            >
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+                {open ? (
+                  <path
+                    d="M5 5l12 12M17 5L5 17"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  />
+                ) : (
+                  <path
+                    d="M3 6h16M3 11h16M3 16h16"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  />
+                )}
+              </svg>
+            </button>
 
-        {/* Centre — logo */}
-        <Link
-          href="/"
-          onClick={() => setOpen(false)}
-          className="absolute left-1/2 -translate-x-1/2 text-ink"
-          aria-label="Shift Orbit — home"
-        >
-          <Logo />
-        </Link>
+            <LanguageSwitcher />
+          </div>
 
-        {/* Right — social links */}
-        <div className="flex items-center gap-2">
-          <SocialLinks className="hidden sm:flex" />
-          <Link href="/#contact" className="btn btn-primary btn-sm hidden lg:inline-flex">
-            Get in touch
+          {/* Centre — logo */}
+          <Link
+            href="/"
+            onClick={() => setOpen(false)}
+            className="absolute left-1/2 hidden -translate-x-1/2 text-ink sm:block"
+            aria-label={`${"Shift Orbit"} — home`}
+          >
+            <Logo />
           </Link>
-        </div>
-      </div>
 
-    </header>
+          {/* Right — social links */}
+          <div className="flex items-center gap-2">
+            <SocialLinks className="hidden sm:flex" />
+            <Link href="/#contact" className="btn btn-primary btn-sm hidden lg:inline-flex">
+              {c.common.getInTouch}
+            </Link>
+          </div>
+        </div>
+      </header>
 
       {/* Full-screen menu, the way the reference site does it on every size.
           It lives outside <header> because the header's backdrop-filter would
@@ -100,10 +106,10 @@ export default function Header() {
         >
           <nav aria-label="Primary" className="container-page py-10">
             <ul className="space-y-1">
-              {nav.map((item, i) => (
-                <li key={item.href}>
+              {navHrefs.map((href, i) => (
+                <li key={href}>
                   <Link
-                    href={item.href}
+                    href={href}
                     onClick={() => setOpen(false)}
                     className="group flex items-baseline gap-4 border-b border-line py-5 transition-colors hover:text-accent"
                   >
@@ -111,7 +117,7 @@ export default function Header() {
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <span className="display text-[clamp(1.75rem,6vw,3rem)]">
-                      {item.label}
+                      {c.nav[i]}
                     </span>
                   </Link>
                 </li>
@@ -124,7 +130,7 @@ export default function Header() {
                 onClick={() => setOpen(false)}
                 className="btn btn-primary"
               >
-                Get in touch
+                {c.common.getInTouch}
               </Link>
               <SocialLinks />
             </div>

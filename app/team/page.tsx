@@ -1,13 +1,15 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { CATEGORIES, getAllMembers, type TeamMember } from "@/lib/team"
+import { CATEGORIES, getAllMembers, type CategoryKey, type TeamMember } from "@/lib/team"
 import MemberCard from "@/components/site/MemberCard"
+import { useContent } from "@/lib/i18n-context"
 
 export default function TeamPage() {
   const [members, setMembers] = useState<TeamMember[]>([])
   const [loading, setLoading] = useState(true)
   const [active, setActive] = useState<string>("all")
+  const c = useContent()
 
   useEffect(() => {
     getAllMembers()
@@ -33,22 +35,22 @@ export default function TeamPage() {
       <div className="container-page">
         <header className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
           <div className="max-w-[52ch]">
-            <p className="eyebrow">The crew</p>
-            <h1 className="display mt-4 text-[clamp(1.75rem,4vw,2.75rem)]">Team members</h1>
+            <p className="eyebrow">{c.team.eyebrow}</p>
+            <h1 className="display mt-4 text-[clamp(1.75rem,4vw,2.75rem)]">{c.team.pageHeading}</h1>
             <p className="lead mt-5">
-              The people who design, build, and look after every world we ship.
+{c.team.pageBody}
             </p>
           </div>
           {!loading && members.length > 0 && (
             <p className="mono text-[0.8125rem] text-ink-3">
-              {members.length} {members.length === 1 ? "person" : "people"}
+              {c.team.peopleCount(members.length)}
             </p>
           )}
         </header>
 
         {groups.length > 1 && (
-          <div className="mt-8 flex flex-wrap gap-2" role="group" aria-label="Filter by category">
-            {[{ key: "all", label: "All" }, ...groups].map((g) => (
+          <div className="mt-8 flex flex-wrap gap-2" role="group" aria-label={c.team.filterLabel}>
+            {[{ key: "all" as const }, ...groups].map((g) => (
               <button
                 key={g.key}
                 type="button"
@@ -60,7 +62,7 @@ export default function TeamPage() {
                     : "border-line text-ink-2 hover:border-line-2 hover:text-ink"
                 }`}
               >
-                {g.label}
+                {g.key === "all" ? c.team.all : c.team.categories[g.key as CategoryKey]}
               </button>
             ))}
           </div>
@@ -68,13 +70,12 @@ export default function TeamPage() {
 
         <div className="mt-12" aria-busy={loading}>
           {loading ? (
-            <p className="text-[0.9375rem] text-ink-3">Loading…</p>
+            <p className="text-[0.9375rem] text-ink-3">{c.common.loading}</p>
           ) : members.length === 0 ? (
             <div className="card px-6 py-14 text-center">
-              <p className="text-[1.0625rem] font-medium">No team members yet</p>
+              <p className="text-[1.0625rem] font-medium">{c.team.emptyTitle}</p>
               <p className="mx-auto mt-2 max-w-[42ch] text-[0.9375rem] leading-relaxed text-ink-2">
-                Members added from the admin panel will appear here, grouped by
-                category.
+{c.team.emptyBody}
               </p>
             </div>
           ) : (
@@ -86,7 +87,7 @@ export default function TeamPage() {
                       id={`cat-${group.key}`}
                       className="text-[1.0625rem] font-semibold tracking-[-0.011em]"
                     >
-                      {group.label}
+                      {c.team.categories[group.key]}
                     </h2>
                     <span className="mono text-[0.75rem] text-ink-3">
                       {group.members.length}

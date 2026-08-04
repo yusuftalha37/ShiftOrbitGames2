@@ -4,30 +4,26 @@ import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { getAllGames, type Game } from "@/lib/games"
-import { games as copy } from "@/lib/site-content"
+import { useContent } from "@/lib/i18n-context"
 import Reveal from "@/components/site/Reveal"
 
-const status: Record<Game["status"], { label: string; dot: string }> = {
-  released: { label: "Released", dot: "bg-positive" },
-  "coming-soon": { label: "Coming soon", dot: "bg-accent" },
-  "in-development": { label: "In development", dot: "bg-ink-3" },
+const DOT: Record<Game["status"], string> = {
+  released: "bg-positive",
+  "coming-soon": "bg-accent",
+  "in-development": "bg-ink-3",
 }
 
-const FILTERS = [
-  { key: "all", label: "All" },
-  { key: "released", label: "Released" },
-  { key: "coming-soon", label: "Coming soon" },
-  { key: "in-development", label: "In development" },
-] as const
+const FILTER_KEYS = ["all", "released", "coming-soon", "in-development"] as const
 
-type FilterKey = (typeof FILTERS)[number]["key"]
+type FilterKey = (typeof FILTER_KEYS)[number]
 
 function StatusBadge({ value }: { value: Game["status"] }) {
+  const c = useContent()
   return (
     <span className="inline-flex items-center gap-2">
-      <span className={`h-1.5 w-1.5 rounded-full ${status[value].dot}`} aria-hidden="true" />
+      <span className={`h-1.5 w-1.5 rounded-full ${DOT[value]}`} aria-hidden="true" />
       <span className="text-[0.6875rem] font-semibold uppercase tracking-[0.09em] text-ink-3">
-        {status[value].label}
+        {c.games.filters[value]}
       </span>
     </span>
   )
@@ -35,6 +31,7 @@ function StatusBadge({ value }: { value: Game["status"] }) {
 
 /** The newest game gets a wide slot — it is what most visitors came for. */
 function FeaturedGame({ game }: { game: Game }) {
+  const c = useContent()
   return (
     <article className="card card-hover overflow-hidden">
       <div className="grid grid-cols-1 lg:grid-cols-2">
@@ -55,7 +52,7 @@ function FeaturedGame({ game }: { game: Game }) {
             />
           ) : (
             <span className="absolute inset-0 flex items-center justify-center text-[0.8125rem] text-ink-3">
-              No cover image
+              {c.common.noCover}
             </span>
           )}
         </Link>
@@ -64,7 +61,7 @@ function FeaturedGame({ game }: { game: Game }) {
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <StatusBadge value={game.status} />
             <span className="text-[0.6875rem] font-semibold uppercase tracking-[0.09em] text-accent">
-              Latest release
+              {c.hero.latestRelease}
             </span>
           </div>
 
@@ -90,7 +87,7 @@ function FeaturedGame({ game }: { game: Game }) {
 
           <div className="mt-7 flex flex-wrap items-center gap-3">
             <Link href={`/games/${game.slug}`} className="btn btn-primary">
-              View game
+              {c.common.viewGame}
             </Link>
             {game.steamUrl && (
               <a
@@ -99,7 +96,7 @@ function FeaturedGame({ game }: { game: Game }) {
                 rel="noopener noreferrer"
                 className="btn btn-secondary"
               >
-                {game.status === "released" ? "Steam" : "Wishlist on Steam"}
+                {game.status === "released" ? "Steam" : c.hero.wishlist}
               </a>
             )}
           </div>
@@ -110,6 +107,7 @@ function FeaturedGame({ game }: { game: Game }) {
 }
 
 function GameCard({ game }: { game: Game }) {
+  const c = useContent()
   return (
     <Link
       href={`/games/${game.slug}`}
@@ -126,7 +124,7 @@ function GameCard({ game }: { game: Game }) {
           />
         ) : (
           <span className="absolute inset-0 flex items-center justify-center text-[0.8125rem] text-ink-3">
-            No cover image
+            {c.common.noCover}
           </span>
         )}
       </div>
@@ -151,7 +149,7 @@ function GameCard({ game }: { game: Game }) {
         )}
 
         <span className="mt-auto pt-5 text-[0.8125rem] font-medium text-accent">
-          View game →
+          {c.common.viewGame} →
         </span>
       </div>
     </Link>
@@ -162,6 +160,7 @@ export default function Games() {
   const [items, setItems] = useState<Game[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<FilterKey>("all")
+  const c = useContent()
 
   useEffect(() => {
     getAllGames()
@@ -172,7 +171,7 @@ export default function Games() {
 
   // Only offer a filter when something would actually be behind it.
   const filters = useMemo(
-    () => FILTERS.filter((f) => f.key === "all" || items.some((g) => g.status === f.key)),
+    () => FILTER_KEYS.filter((k) => k === "all" || items.some((g) => g.status === k)),
     [items],
   )
 
@@ -189,15 +188,15 @@ export default function Games() {
         <Reveal>
           <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
             <div>
-              <p className="eyebrow">{copy.eyebrow}</p>
+              <p className="eyebrow">{c.games.eyebrow}</p>
               <h2 id="games-heading" className="display mt-4 text-[clamp(1.75rem,4vw,2.75rem)]">
-                {copy.heading}
+                {c.games.heading}
               </h2>
-              <p className="lead mt-5 max-w-[52ch]">{copy.body}</p>
+              <p className="lead mt-5 max-w-[52ch]">{c.games.body}</p>
             </div>
             {!loading && items.length > 0 && (
               <p className="mono text-[0.8125rem] text-ink-3">
-                {items.length} {items.length === 1 ? "title" : "titles"}
+                {c.games.titleCount(items.length)}
               </p>
             )}
           </div>
@@ -205,20 +204,20 @@ export default function Games() {
 
         {!loading && filters.length > 2 && (
           <Reveal>
-            <div className="mt-8 flex flex-wrap gap-2" role="group" aria-label="Filter games">
-              {filters.map((f) => (
+            <div className="mt-8 flex flex-wrap gap-2" role="group" aria-label={c.games.filterLabel}>
+              {filters.map((key) => (
                 <button
-                  key={f.key}
+                  key={key}
                   type="button"
-                  onClick={() => setFilter(f.key)}
-                  aria-pressed={filter === f.key}
+                  onClick={() => setFilter(key)}
+                  aria-pressed={filter === key}
                   className={`rounded-full border px-3.5 py-1.5 text-[0.8125rem] font-medium transition-colors ${
-                    filter === f.key
+                    filter === key
                       ? "border-accent bg-accent text-[#17130a]"
                       : "border-line text-ink-2 hover:border-line-2 hover:text-ink"
                   }`}
                 >
-                  {f.label}
+                  {c.games.filters[key]}
                 </button>
               ))}
             </div>
@@ -227,21 +226,20 @@ export default function Games() {
 
         <div className="mt-10" aria-busy={loading}>
           {loading ? (
-            <p className="text-[0.9375rem] text-ink-3">Loading…</p>
+            <p className="text-[0.9375rem] text-ink-3">{c.common.loading}</p>
           ) : items.length === 0 ? (
             <div className="card px-6 py-14 text-center">
-              <p className="text-[1.0625rem] font-medium">{copy.empty}</p>
+              <p className="text-[1.0625rem] font-medium">{c.games.emptyTitle}</p>
               <p className="mx-auto mt-2 max-w-[42ch] text-[0.9375rem] leading-relaxed text-ink-2">
-                We are heads-down on our first title. Follow the news for
-                development updates as it comes together.
+{c.games.emptyBody}
               </p>
               <Link href="/news" className="btn btn-secondary mt-6">
-                Read development news
+                {c.games.emptyCta}
               </Link>
             </div>
           ) : visible.length === 0 ? (
             <p className="text-[0.9375rem] text-ink-3">
-              Nothing in this category yet.
+              {c.games.emptyFilter}
             </p>
           ) : (
             <div className="space-y-6">

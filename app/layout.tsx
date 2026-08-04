@@ -5,6 +5,7 @@ import Header from "@/components/site/Header"
 import Footer from "@/components/site/Footer"
 import { AuthProvider } from "@/lib/auth-context"
 import { SettingsProvider } from "@/lib/settings-context"
+import { LanguageProvider } from "@/lib/i18n-context"
 import { company } from "@/lib/site-content"
 
 const inter = Inter({
@@ -75,11 +76,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         <AuthProvider>
+          <LanguageProvider>
           <SettingsProvider>
             <Header />
             <main id="main" className="pt-[4.5rem]">{children}</main>
             <Footer />
           </SettingsProvider>
+          </LanguageProvider>
         </AuthProvider>
         <script
           type="application/ld+json"
