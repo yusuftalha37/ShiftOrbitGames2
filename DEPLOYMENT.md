@@ -3,82 +3,116 @@
 Bu proje Next.js 16 (App Router) + Firebase (Auth & Firestore) kullanıyor. Sunucu
 tarafında ek bir servise ihtiyaç yok, bu yüzden en pratik yol Vercel.
 
-## 0. Kod GitHub'da olsun
+## Sırayla yapılacaklar
 
-Vercel kodu GitHub'dan okur. Depo boşsa önce dosyaları yükle:
-github.com/<kullanici>/<depo> → **uploading an existing file** → proje klasörünün
-**içindekileri** sürükle → **Commit changes**.
+Aşağıdaki altı adım tamamlandığında site kendi domaininde yayında olur.
+Sıra önemli: 4 ve 5'i atlarsan site açılır ama giriş ve panel çalışmaz.
 
-> Yüklemeden önce `.env.local` dosyasını sil. İçinde Firebase anahtarların var ve
-> depo herkese açıksa anahtarlar da açığa çıkar. `.env.local.example` kalabilir,
-> içi boştur.
+---
 
-## 1. Repoyu Vercel'e bağla
+## 1. Vercel'e bağla
 
-1. https://vercel.com adresine GitHub hesabınla giriş yap.
-2. **Add New → Project** → bu repoyu seç → **Import**.
-3. Framework otomatik olarak Next.js algılanır; build ayarlarına dokunma.
+Kod zaten GitHub'da: **github.com/yusuftalha37/ShiftOrbitGames2** (`main` dalı).
+
+1. https://vercel.com adresine **GitHub hesabınla** giriş yap.
+2. **Add New → Project** → `ShiftOrbitGames2` deposunu seç → **Import**.
+   (Depo gizli; Vercel GitHub hesabın üzerinden erişir, ek bir ayar gerekmez.)
+3. Framework otomatik **Next.js** algılanır — build ayarlarına dokunma.
+4. Henüz **Deploy'a basma**, önce sonraki adımdaki değişkenleri gir.
 
 ## 2. Ortam değişkenlerini gir
 
-Vercel'de **Settings → Environment Variables** altına `.env.local.example`
-içindeki tüm anahtarları ekle (Production, Preview ve Development için):
+Vercel'de **Settings → Environment Variables**. Değerleri Firebase Console →
+**Project settings → Your apps → SDK setup and configuration** ekranından
+kopyala. Hepsini Production, Preview ve Development için ekle:
 
-| Değişken | Nereden alınır |
+| Değişken | Değer |
 | --- | --- |
-| `NEXT_PUBLIC_FIREBASE_API_KEY` | Firebase Console → Project settings → Your apps |
-| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | aynı ekran |
-| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | aynı ekran |
-| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | aynı ekran |
-| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | aynı ekran |
-| `NEXT_PUBLIC_FIREBASE_APP_ID` | aynı ekran |
+| `NEXT_PUBLIC_FIREBASE_API_KEY` | Firebase config'ten |
+| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Firebase config'ten |
+| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Firebase config'ten |
+| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | Firebase config'ten |
+| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | Firebase config'ten |
+| `NEXT_PUBLIC_FIREBASE_APP_ID` | Firebase config'ten |
 | `NEXT_PUBLIC_SITE_URL` | Kendi domainin, örn. `https://shiftorbit.com` |
 
-`NEXT_PUBLIC_SITE_URL` girilmezse OpenGraph/canonical adresleri
-`http://localhost:3000` olarak kalır; sosyal medya paylaşımlarında görsel
-görünmez.
+`NEXT_PUBLIC_SITE_URL` girilmezse paylaşım kartları ve canonical adresler
+`localhost` kalır. Sonra eklersen **yeniden deploy** etmen gerekir.
+
+Bunlar tarayıcıya gönderilen açık anahtarlardır (`NEXT_PUBLIC_` ön eki bunu
+belirtir); gizli olmaları beklenmez. Projeyi asıl koruyan şey Firestore
+kurallarıdır — adım 5.
+
+Şimdi **Deploy**'a bas.
 
 ## 3. Domaini bağla
 
 1. Vercel'de proje → **Settings → Domains** → domainini yaz → **Add**.
-2. Vercel sana DNS kaydı verir. Domain sağlayıcının panelinde ekle:
-   - Kök domain (`example.com`) için: `A` kaydı → `76.76.21.21`
-   - `www` için: `CNAME` → `cname.vercel-dns.com`
-   (Vercel ekranda güncel değerleri gösterir; oradakini esas al.)
-3. DNS yayılması genelde 10 dakika–1 saat sürer. SSL sertifikası Vercel
-   tarafından otomatik oluşturulur.
+2. Vercel sana DNS kayıtlarını verir. Domain sağlayıcının panelinde ekle:
+   - Kök domain (`example.com`): `A` kaydı → `76.76.21.21`
+   - `www`: `CNAME` → `cname.vercel-dns.com`
 
-## 4. Firebase tarafında domaini yetkilendir (atlanırsa admin girişi çalışmaz)
+   Vercel ekranda güncel değerleri gösterir; **oradakini esas al**, buradaki
+   değerler değişebilir.
+3. DNS yayılması 10 dakika ile birkaç saat arasında sürer. SSL sertifikasını
+   Vercel otomatik üretir, bir şey yapman gerekmez.
 
-Firebase Console → **Authentication → Settings → Authorized domains** →
-**Add domain** ile şunları ekle:
+## 4. Firebase: girişi aç ve domaini yetkilendir
 
-- `example.com` (kendi domainin)
-- `www.example.com`
-- `proje-adi.vercel.app` (Vercel'in verdiği adres)
+Firebase Console → **Authentication**:
 
-Bu adım yapılmazsa `/admin/login` sayfasında giriş `auth/unauthorized-domain`
-hatası verir.
+1. **Sign-in method** sekmesi → **Email/Password** → etkinleştir.
+2. Aynı sekme → **Google** → etkinleştir (destek e-postasını seç).
+   Bu yapılmazsa "Google ile devam et" düğmesi hata verir.
+3. **Settings → Authorized domains** → **Add domain** ile üçünü de ekle:
+   - `example.com` (kendi domainin)
+   - `www.example.com`
+   - `proje-adi.vercel.app` (Vercel'in verdiği adres)
 
-## 5. Admin kullanıcısı
+Bu adım atlanırsa giriş `auth/unauthorized-domain` hatası verir.
 
-Admin paneli Firebase Authentication'daki e-posta/şifre kullanıcısıyla çalışır.
-Kullanıcı yoksa Firebase Console → Authentication → Users → **Add user**.
+## 5. Güvenlik kurallarını yükle (zorunlu)
 
-Firestore kurallarının da yayında olduğundan emin ol: okuma herkese açık,
-yazma sadece giriş yapmış kullanıcıya:
+Firestore varsayılan kuralları ya her şeyi kapalı tutar ya da bir süre sonra
+her şeyi açar. Projenin kuralları depodaki `firestore.rules` dosyasındadır ve
+yüklenmeden **panel çalışmaz, mesaj gönderilemez**.
 
+En kolay yol — Firebase Console → **Firestore Database → Rules** sekmesi →
+`firestore.rules` dosyasının **tüm içeriğini** yapıştır → **Publish**.
+
+Ya da komut satırından:
+
+```bash
+npm i -g firebase-tools
+firebase login
+firebase deploy --only firestore:rules
 ```
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /{document=**} {
-      allow read: if true;
-      allow write: if request.auth != null;
-    }
-  }
-}
-```
+
+Bu kurallar emülatörde 53 saldırı senaryosuna karşı test edilmiştir
+(`tests/firestore-rules.test.mjs`).
+
+## 6. İlk yöneticiyi tanımla
+
+1. Yayındaki sitede `/admin/login` → **Kayıt ol** ile hesabını aç.
+2. Panel sana bir **hesap kimliği (uid)** gösterecek — kopyala.
+3. Firebase Console → **Firestore Database** → `admins` adında koleksiyon
+   oluştur → **doküman kimliği (Document ID) o uid olan** boş bir doküman ekle.
+4. Paneli yenile; editör açılır.
+
+Bundan sonra diğer yöneticileri panelin **Users** sekmesinden ekleyebilirsin;
+Console'a bir daha girmen gerekmez.
+
+---
+
+## Yayın sonrası kontrol listesi
+
+- [ ] Ana sayfa domainde açılıyor, kilit simgesi (HTTPS) var
+- [ ] `/admin/login` açılıyor, e-posta ve Google ile giriş çalışıyor
+- [ ] Panelde Games / News / Team sekmelerinden kayıt eklenip siliniyor
+- [ ] Panel → **Settings**'ten sosyal linkler girildi (girilmeyen ikon çıkmaz)
+- [ ] Çıkış yapıp iletişim formundan bir test mesajı gönderildi, panelin
+      **Messages** sekmesinde göründü
+- [ ] Aynı gün ikinci mesaj denendi, engellendiği görüldü
 
 ## Alternatif: Firebase App Hosting
 
@@ -105,6 +139,11 @@ Vercel'de daha hızlı güncelleniyor.
 | Vercel domain için "Invalid Configuration" | DNS henüz yayılmamış ya da eski `A` kaydı silinmemiş |
 | Sosyal paylaşımda kapak görseli çıkmıyor | `NEXT_PUBLIC_SITE_URL` tanımlı değil ya da tanımlandıktan sonra redeploy yapılmamış |
 | Görsel yüklenmiyor | `next.config.ts` sadece `firebasestorage.googleapis.com` adresine izin veriyor |
+| Panelde "Could not load / Could not save" | `firestore.rules` yüklenmemiş (adım 5) |
+| Girişte `auth/operation-not-allowed` | Authentication → Sign-in method'da sağlayıcı kapalı (adım 4) |
+| Google düğmesi hata veriyor | Google sağlayıcısı kapalı ya da domain Authorized domains'te yok |
+| Panel açılıyor ama editör yerine uid gösteriyor | Hesap `admins` koleksiyonunda değil (adım 6) |
+| Mesaj gönderilemiyor | Kurallar yüklenmemiş ya da gün hakkı dolmuş (hesap başına günde 1) |
 
 ## Yerelde çalıştırma
 
