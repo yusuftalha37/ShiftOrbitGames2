@@ -7,6 +7,8 @@ import {
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
   updateProfile,
+  signInWithPopup,
+  GoogleAuthProvider,
 } from "firebase/auth"
 import { FirebaseError } from "firebase/app"
 import { auth } from "@/lib/firebase"
@@ -38,6 +40,11 @@ function messageFor(code: string) {
       return "Email sign-in is not enabled for this Firebase project yet."
     case "auth/network-request-failed":
       return "Could not reach the server. Check your connection."
+    case "auth/popup-closed-by-user":
+    case "auth/cancelled-popup-request":
+      return ""
+    case "auth/account-exists-with-different-credential":
+      return "An account with this email already exists. Sign in with your password instead."
     default:
       return "Something went wrong. Please try again."
   }
@@ -75,6 +82,20 @@ export default function AdminLoginPage() {
           await updateProfile(cred.user, { displayName: name.trim() })
         }
       }
+      router.push("/admin")
+    } catch (err) {
+      setError(messageFor(err instanceof FirebaseError ? err.code : ""))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handleGoogle() {
+    setError("")
+    setNotice("")
+    setLoading(true)
+    try {
+      await signInWithPopup(auth, new GoogleAuthProvider())
       router.push("/admin")
     } catch (err) {
       setError(messageFor(err instanceof FirebaseError ? err.code : ""))
@@ -132,7 +153,28 @@ export default function AdminLoginPage() {
             ))}
           </div>
 
-          <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+          <button
+            type="button"
+            onClick={handleGoogle}
+            disabled={loading}
+            className="btn btn-secondary mt-6 w-full"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.65l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.11a6.6 6.6 0 0 1 0-4.22V7.05H2.18a11 11 0 0 0 0 9.9l3.66-2.84z"/>
+              <path fill="#EA4335" d="M12 4.75c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 1.47 14.97.5 12 .5A11 11 0 0 0 2.18 7.05l3.66 2.84C6.71 7.29 9.14 4.75 12 4.75z"/>
+            </svg>
+            {c.account.google}
+          </button>
+
+          <div className="my-6 flex items-center gap-3">
+            <span className="h-px flex-1 bg-line" />
+            <span className="text-[0.75rem] text-ink-3">{c.account.or}</span>
+            <span className="h-px flex-1 bg-line" />
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
             {mode === "signup" && (
               <div>
                 <label htmlFor="auth-name" className={labelClass}>

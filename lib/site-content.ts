@@ -129,6 +129,13 @@ const en = {
     sending: "Sending…",
     sent: "Thank you — your message is on its way.",
     error: "Something went wrong sending the form. Please email us at",
+    signInPrompt: "Sign in to send a message",
+    signInBody:
+      "Messages come from a signed-in account so we can reply and keep spam out. One message per day.",
+    alreadySent:
+      "You have already sent a message today. We read every one — you can write again tomorrow.",
+    dailyNote: "One message per day.",
+    tooLong: "Message is too long (2000 characters maximum).",
   },
   account: {
     signIn: "Sign in",
@@ -151,6 +158,8 @@ const en = {
     createAccount: "Create account",
     backToSite: "Back to the site",
     blocked: "This account has been blocked. Contact the studio if you think this is a mistake.",
+    google: "Continue with Google",
+    or: "or",
   },
   footer: {
     description:
@@ -268,6 +277,13 @@ const tr: typeof en = {
     sending: "Gönderiliyor…",
     sent: "Teşekkürler — mesajın yola çıktı.",
     error: "Form gönderilirken bir sorun oldu. Lütfen bize yazın:",
+    signInPrompt: "Mesaj göndermek için giriş yap",
+    signInBody:
+      "Mesajlar giriş yapmış hesaptan gelir; böylece sana dönebiliyor ve spam'i engelliyoruz. Günde bir mesaj.",
+    alreadySent:
+      "Bugün zaten bir mesaj gönderdin. Hepsini okuyoruz — yarın tekrar yazabilirsin.",
+    dailyNote: "Günde bir mesaj.",
+    tooLong: "Mesaj çok uzun (en fazla 2000 karakter).",
   },
   account: {
     signIn: "Giriş yap",
@@ -290,6 +306,8 @@ const tr: typeof en = {
     createAccount: "Hesap oluştur",
     backToSite: "Siteye dön",
     blocked: "Bu hesap engellenmiş. Bir yanlışlık olduğunu düşünüyorsan stüdyoyla iletişime geç.",
+    google: "Google ile devam et",
+    or: "veya",
   },
   footer: {
     description:

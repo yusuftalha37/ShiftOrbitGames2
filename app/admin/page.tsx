@@ -7,17 +7,19 @@ import { useAuth } from "@/lib/auth-context"
 import NewsManager from "@/components/admin/NewsManager"
 import GameManager from "@/components/admin/GameManager"
 import TeamManager from "@/components/admin/TeamManager"
+import MessagesManager from "@/components/admin/MessagesManager"
 import UsersManager from "@/components/admin/UsersManager"
 import SettingsManager from "@/components/admin/SettingsManager"
 import Overview from "@/components/admin/Overview"
 
-type Tab = "overview" | "games" | "news" | "team" | "users" | "settings"
+type Tab = "overview" | "games" | "news" | "team" | "messages" | "users" | "settings"
 
 const TABS: { key: Tab; label: string }[] = [
   { key: "overview", label: "Overview" },
   { key: "games", label: "Games" },
   { key: "news", label: "News" },
   { key: "team", label: "Team" },
+  { key: "messages", label: "Messages" },
   { key: "users", label: "Users" },
   { key: "settings", label: "Settings" },
 ]
@@ -135,6 +137,7 @@ export default function AdminDashboard() {
         {tab === "games" && <GameManager />}
         {tab === "news" && <NewsManager />}
         {tab === "team" && <TeamManager />}
+        {tab === "messages" && <MessagesManager />}
         {tab === "users" && <UsersManager />}
         {tab === "settings" && <SettingsManager />}
       </div>

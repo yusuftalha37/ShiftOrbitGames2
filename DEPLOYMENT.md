@@ -232,3 +232,38 @@ gerekiyor**, yoksa Users sekmesi listeyi yükleyemez:
 ```bash
 firebase deploy --only firestore:rules
 ```
+
+## İletişim mesajları
+
+İletişim formu artık **giriş yapmış hesaplara** açık ve her hesap **günde bir
+mesaj** gönderebilir. Gelen mesajlar panelde **Messages** sekmesinde görünür;
+oradan yanıtlayabilir (e-posta istemcisi açılır) veya silebilirsin.
+
+### Günlük sınır nasıl zorlanıyor
+
+Mesaj dokümanının kimliği `<uid>_<günNumarası>` biçimindedir ve kurallar başka
+hiçbir kimliği kabul etmez. Gün numarası `request.time`'dan hesaplandığı için
+sahte bir tarih yazıp ikinci mesaj atmak mümkün değildir; aynı gün ikinci yazma
+denemesi de zaten var olan dokümanla çakışır. Sınır tarayıcıda değil, sunucuda
+uygulanır.
+
+Gün **UTC** üzerinden sayılır: hak 00:00 UTC'de yenilenir (Türkiye saatiyle
+03:00).
+
+### Google ile giriş
+
+Hem giriş sayfasında hem iletişim formunda **"Google ile devam et"** düğmesi
+vardır. Çalışması için Firebase Console → **Authentication → Sign-in method**
+altında **Google** sağlayıcısını etkinleştirmen gerekir. Ayrıca yayına
+aldığın alan adını **Authorized domains** listesine eklemeyi unutma.
+
+E-posta/şifre ile kayıt da aynı yerde durmaya devam ediyor.
+
+### Kurallar
+
+`messages` koleksiyonu `firestore.rules` dosyasına eklendi. Yüklemezsen mesaj
+gönderilemez:
+
+```bash
+firebase deploy --only firestore:rules
+```

@@ -1,6 +1,8 @@
 import { initializeTestEnvironment, assertFails, assertSucceeds } from "@firebase/rules-unit-testing"
 import { doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, addDoc } from "firebase/firestore"
 import { readFileSync } from "node:fs"
+import { serverTimestamp } from "firebase/firestore"
+const SERVER = serverTimestamp()
 
 const env = await initializeTestEnvironment({
   projectId: "sec-test",
@@ -86,9 +88,43 @@ await check("tip dışı yorum yazılamaz", null, d => addDoc(collection(d,"post
 await check("ziyaretçi yorum yazabilir", null, d => addDoc(collection(d,"posts/p1/comments"),{name:"Ali",message:"Merhaba"}), false)
 await check("ziyaretçi yorum silemez", null, d => deleteDoc(doc(d,"posts/p1/comments/c1")))
 
+console.log("\n── Mesaj sınırı ──")
+const DAY = Math.floor(Date.now() / 86400000)
+const msg = (extra={}) => ({ uid:"user1", name:"Ali", email:"a@x.com", message:"Merhaba", createdAt: SERVER, ...extra })
+await check("giriş yapan günde 1 mesaj gönderebilir", "user1", d => setDoc(doc(d,`messages/user1_${DAY}`), msg()), false)
+await check("anonim mesaj gönderemez", null, d => setDoc(doc(d,`messages/anon_${DAY}`), msg({uid:"anon"})))
+await check("engelli mesaj gönderemez", "blocked1", d => setDoc(doc(d,`messages/blocked1_${DAY}`), msg({uid:"blocked1"})))
+await check("başkasının adına mesaj gönderilemez", "user1", d => setDoc(doc(d,`messages/admin1_${DAY}`), msg({uid:"admin1"})))
+await check("sahte gelecek gün ile ikinci mesaj atılamaz", "user1", d => setDoc(doc(d,`messages/user1_${DAY+1}`), msg()))
+await check("sahte geçmiş gün ile ikinci mesaj atılamaz", "user1", d => setDoc(doc(d,`messages/user1_${DAY-1}`), msg()))
+await check("rastgele kimlikle mesaj atılamaz", "user1", d => setDoc(doc(d,"messages/serbest"), msg()))
+await check("uid alanı sahtelenemez", "user1", d => setDoc(doc(d,`messages/user1_${DAY}`), msg({uid:"admin1"})))
+await check("2000 karakterden uzun mesaj atılamaz", "user1", d => setDoc(doc(d,`messages/user1_${DAY}`), msg({message:"x".repeat(2001)})))
+await check("boş mesaj atılamaz", "user1", d => setDoc(doc(d,`messages/user1_${DAY}`), msg({message:""})))
+await check("createdAt sahtelenemez", "user1", d => setDoc(doc(d,`messages/user1_${DAY}`), msg({createdAt:new Date(2000,0,1)})))
+await check("normal kullanıcı mesajları listeleyemez", "user1", d => getDocs(collection(d,"messages")))
+await check("anonim mesajları okuyamaz", null, d => getDocs(collection(d,"messages")))
+await check("ADMİN mesajları listeleyebilir", "admin1", d => getDocs(collection(d,"messages")), false)
+await check("kullanıcı mesajını silemez", "user1", d => deleteDoc(doc(d,`messages/user1_${DAY}`)))
+
 console.log("\n── Kapsam dışı ──")
 await check("rastgele koleksiyona yazılamaz", "user1", d => setDoc(doc(d,"secrets/x"),{a:1}))
 await check("rastgele koleksiyon okunamaz", null, d => getDoc(doc(d,"secrets/x")))
+
+
+// Aynı gün ikinci mesaj — reset atlanarak arka arkaya iki yazma
+await reset()
+{
+  const d = as("user1")
+  const id = `messages/user1_${DAY}`
+  await setDoc(doc(d, id), msg())
+  try {
+    await assertFails(setDoc(doc(d, id), msg({ message: "ikinci" })))
+    console.log("  \u2713 aynı gün ikinci mesaj REDDEDİLDİ"); pass++
+  } catch {
+    console.log("  \u2717 AÇIK: aynı gün ikinci mesaj gönderilebildi"); fail++
+  }
+}
 
 console.log(`\nSONUÇ: ${pass} geçti, ${fail} açık`)
 await env.cleanup()
