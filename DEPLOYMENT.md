@@ -5,8 +5,52 @@ tarafında ek bir servise ihtiyaç yok, bu yüzden en pratik yol Vercel.
 
 ## Sırayla yapılacaklar
 
-Aşağıdaki altı adım tamamlandığında site kendi domaininde yayında olur.
-Sıra önemli: 4 ve 5'i atlarsan site açılır ama giriş ve panel çalışmaz.
+Aşağıdaki adımlar tamamlandığında site kendi domaininde yayında olur.
+Sıra önemli: Firebase (adım 0) olmadan hiçbiri çalışmaz; 5 ve 6'yı atlarsan
+site açılır ama giriş ve panel çalışmaz.
+
+---
+
+## 0. Firebase projesini oluştur
+
+Sitenin verileri (oyunlar, haberler, kullanıcılar, mesajlar) Firebase'de tutulur.
+Ücretsiz "Spark" planı bu site için fazlasıyla yeter, kredi kartı istemez.
+
+### 0.1 — Proje aç
+
+1. https://console.firebase.google.com adresine Google hesabınla gir.
+2. **Create a project** (Proje oluştur) → proje adı yaz, örn. `shiftorbit`
+   → devam et.
+3. Google Analytics sorarsa **kapatabilirsin** (bu site için gerekmez) →
+   **Create project** → bitince **Continue**.
+
+### 0.2 — Web uygulaması ekle (config anahtarlarını buradan alacaksın)
+
+1. Proje ana ekranında **`</>`** (Web) simgesine tıkla.
+2. Bir takma ad yaz (örn. `shiftorbit-web`) → **Register app**.
+   ("Firebase Hosting" kutusunu işaretleme, Vercel kullanıyoruz.)
+3. Karşına `const firebaseConfig = { ... }` bloğu çıkar. **Bu ekrandaki
+   değerler adım 2'de gireceğin anahtarlardır** — sayfayı açık bırak ya da
+   değerleri bir yere kopyala. (Sonra da Project settings → Your apps'ten
+   tekrar ulaşabilirsin.)
+
+### 0.3 — Firestore veritabanını aç
+
+1. Sol menü → **Build → Firestore Database** → **Create database**.
+2. Konum olarak **eur3 (europe-west)** gibi Avrupa'ya yakın bir bölge seç
+   (Türkiye'den erişim için daha hızlı). Konum sonradan değişmez, dikkat et.
+3. **Production mode** ile başlat (kuralları zaten adım 5'te sen yükleyeceksin)
+   → **Enable**.
+
+### 0.4 — Girişi aç
+
+1. Sol menü → **Build → Authentication** → **Get started**.
+2. **Sign-in method** sekmesi →
+   - **Email/Password** → aç → **Save**
+   - **Google** → aç → destek e-postasını seç → **Save**
+
+Bu kadar. Anahtarların hazır (0.2), veritabanın ve girişin açık. Şimdi siteyi
+yayına alabilirsin.
 
 ---
 
@@ -105,14 +149,13 @@ veya değiştirirsen **yeniden deploy etmen gerekir** (Deployments → ⋯ → R
 3. DNS yayılması 10 dakika ile birkaç saat arasında sürer. SSL sertifikasını
    Vercel otomatik üretir, bir şey yapman gerekmez.
 
-## 4. Firebase: girişi aç ve domaini yetkilendir
+## 4. Firebase: domaini yetkilendir
 
-Firebase Console → **Authentication**:
+Giriş sağlayıcılarını adım 0.4'te zaten açtın. Şimdi Firebase'e "bu adreslerden
+gelen girişlere izin ver" demen gerekiyor.
 
-1. **Sign-in method** sekmesi → **Email/Password** → etkinleştir.
-2. Aynı sekme → **Google** → etkinleştir (destek e-postasını seç).
-   Bu yapılmazsa "Google ile devam et" düğmesi hata verir.
-3. **Settings → Authorized domains** → **Add domain** ile üçünü de ekle:
+Firebase Console → **Authentication → Settings → Authorized domains** →
+**Add domain** ile üçünü de ekle:
    - `example.com` (kendi domainin)
    - `www.example.com`
    - `proje-adi.vercel.app` (Vercel'in verdiği adres)
