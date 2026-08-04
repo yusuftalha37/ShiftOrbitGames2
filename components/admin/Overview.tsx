@@ -5,6 +5,7 @@ import Link from "next/link"
 import { getAllGames, type Game } from "@/lib/games"
 import { getAllPosts, type NewsPost } from "@/lib/news"
 import { getAllMembers, type TeamMember } from "@/lib/team"
+import { PLATFORMS, getSocialLinks, type SocialLinks } from "@/lib/settings"
 import { formatDate } from "@/lib/format"
 
 interface Stat {
@@ -16,20 +17,22 @@ interface Stat {
 export default function Overview({
   onNavigate,
 }: {
-  onNavigate: (tab: "games" | "news" | "team") => void
+  onNavigate: (tab: "games" | "news" | "team" | "settings") => void
 }) {
   const [games, setGames] = useState<Game[]>([])
   const [posts, setPosts] = useState<NewsPost[]>([])
   const [members, setMembers] = useState<TeamMember[]>([])
+  const [social, setSocial] = useState<SocialLinks>({})
   const [loading, setLoading] = useState(true)
   const [failed, setFailed] = useState(false)
 
   useEffect(() => {
-    Promise.all([getAllGames(), getAllPosts(), getAllMembers()])
-      .then(([g, p, t]) => {
+    Promise.all([getAllGames(), getAllPosts(), getAllMembers(), getSocialLinks()])
+      .then(([g, p, t, s]) => {
         setGames(g)
         setPosts(p)
         setMembers(t)
+        setSocial(s)
       })
       .catch(() => setFailed(true))
       .finally(() => setLoading(false))
@@ -51,6 +54,7 @@ export default function Overview({
   const released = games.filter((g) => g.status === "released").length
   const unreleased = games.length - released
   const latestPost = posts[0]
+  const socialSet = PLATFORMS.filter((p) => social[p.key]).length
 
   const stats: Stat[] = [
     {
@@ -69,6 +73,11 @@ export default function Overview({
       hint: "Shown on the team page",
     },
     {
+      label: "Social links",
+      value: `${socialSet} / ${PLATFORMS.length}`,
+      hint: socialSet < PLATFORMS.length ? "Missing links stay hidden on the site" : "All set",
+    },
+    {
       label: "Missing cover art",
       value: String(games.filter((g) => !g.coverImage).length),
       hint: "Games without a cover image",
@@ -77,7 +86,7 @@ export default function Overview({
 
   return (
     <div className="space-y-10">
-      <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {stats.map((stat) => (
           <div key={stat.label} className="card p-5">
             <dt className="text-[0.6875rem] font-semibold uppercase tracking-[0.09em] text-ink-3">
@@ -109,6 +118,9 @@ export default function Overview({
           </button>
           <button onClick={() => onNavigate("team")} className="btn btn-secondary btn-sm">
             Add a team member
+          </button>
+          <button onClick={() => onNavigate("settings")} className="btn btn-secondary btn-sm">
+            Social links
           </button>
           <Link href="/" target="_blank" className="btn btn-secondary btn-sm">
             View live site
