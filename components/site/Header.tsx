@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import Logo from "./Logo"
 import SocialLinks from "./SocialLinks"
 import LanguageSwitcher from "./LanguageSwitcher"
+import AccountLink from "./AccountLink"
 import { navHrefs } from "@/lib/site-content"
 import { useContent } from "@/lib/i18n-context"
 
@@ -133,6 +134,10 @@ export default function Header() {
                 {c.common.getInTouch}
               </Link>
               <SocialLinks />
+            </div>
+
+            <div className="mt-8 border-t border-line pt-6">
+              <AccountLink onNavigate={() => setOpen(false)} />
             </div>
           </nav>
         </div>

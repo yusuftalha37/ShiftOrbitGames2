@@ -3,6 +3,7 @@
 import Link from "next/link"
 import Logo from "./Logo"
 import SocialLinks from "./SocialLinks"
+import AccountLink from "./AccountLink"
 import { company, navHrefs } from "@/lib/site-content"
 import { useContent } from "@/lib/i18n-context"
 
@@ -53,9 +54,7 @@ export default function Footer() {
           <p>
             © {year} {company.name}
           </p>
-          <Link href="/admin" className="transition-colors hover:text-ink">
-            {c.footer.admin}
-          </Link>
+          <AccountLink />
         </div>
       </div>
     </footer>

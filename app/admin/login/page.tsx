@@ -10,6 +10,7 @@ import {
 } from "firebase/auth"
 import { FirebaseError } from "firebase/app"
 import { auth } from "@/lib/firebase"
+import { useContent } from "@/lib/i18n-context"
 
 type Mode = "signin" | "signup"
 
@@ -50,6 +51,7 @@ export default function AdminLoginPage() {
   const [error, setError] = useState("")
   const [notice, setNotice] = useState("")
   const [loading, setLoading] = useState(false)
+  const c = useContent()
 
   function switchMode(next: Mode) {
     setMode(next)
@@ -99,12 +101,10 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-sm">
         <div className="card p-8">
           <h1 className="text-[1.25rem] font-semibold tracking-[-0.018em]">
-            {mode === "signin" ? "Sign in" : "Create an account"}
+            {mode === "signin" ? c.account.signInTitle : c.account.signUpTitle}
           </h1>
           <p className="mt-2 text-[0.875rem] leading-relaxed text-ink-2">
-            {mode === "signin"
-              ? "Access the Shift Orbit content panel."
-              : "You can sign in as soon as the account exists, but editing the site is granted separately."}
+{mode === "signin" ? c.account.signInBody : c.account.signUpBody}
           </p>
 
           <div
@@ -125,7 +125,7 @@ export default function AdminLoginPage() {
                     : "text-ink-3 hover:text-ink"
                 }`}
               >
-                {m === "signin" ? "Sign in" : "Sign up"}
+                {m === "signin" ? c.account.signIn : c.account.signUp}
               </button>
             ))}
           </div>
@@ -134,7 +134,7 @@ export default function AdminLoginPage() {
             {mode === "signup" && (
               <div>
                 <label htmlFor="auth-name" className={labelClass}>
-                  Name
+                  {c.account.name}
                 </label>
                 <input
                   id="auth-name"
@@ -149,7 +149,7 @@ export default function AdminLoginPage() {
 
             <div>
               <label htmlFor="auth-email" className={labelClass}>
-                Email
+                {c.account.email}
               </label>
               <input
                 id="auth-email"
@@ -165,7 +165,7 @@ export default function AdminLoginPage() {
             <div>
               <div className="flex items-baseline justify-between gap-3">
                 <label htmlFor="auth-password" className={labelClass}>
-                  Password
+                  {c.account.password}
                 </label>
                 {mode === "signin" && (
                   <button
@@ -173,7 +173,7 @@ export default function AdminLoginPage() {
                     onClick={handleReset}
                     className="text-[0.75rem] text-ink-3 transition-colors hover:text-ink"
                   >
-                    Forgot password?
+                    {c.account.forgot}
                   </button>
                 )}
               </div>
@@ -188,7 +188,7 @@ export default function AdminLoginPage() {
                 className={fieldClass}
               />
               {mode === "signup" && (
-                <p className="mt-2 text-[0.75rem] text-ink-3">At least 6 characters.</p>
+                <p className="mt-2 text-[0.75rem] text-ink-3">{c.account.minChars}</p>
               )}
             </div>
 
@@ -206,18 +206,18 @@ export default function AdminLoginPage() {
             <button type="submit" disabled={loading} className="btn btn-primary w-full">
               {loading
                 ? mode === "signin"
-                  ? "Signing in…"
-                  : "Creating account…"
+                  ? c.account.signingIn
+                  : c.account.creating
                 : mode === "signin"
-                  ? "Sign in"
-                  : "Create account"}
+                  ? c.account.signIn
+                  : c.account.createAccount}
             </button>
           </form>
         </div>
 
         <p className="mt-6 text-center text-[0.8125rem] text-ink-3">
           <Link href="/" className="transition-colors hover:text-ink">
-            ← Back to the site
+            ← {c.account.backToSite}
           </Link>
         </p>
       </div>
