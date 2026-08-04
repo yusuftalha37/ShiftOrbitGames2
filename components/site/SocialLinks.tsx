@@ -49,7 +49,7 @@ export default function SocialLinks({
             target="_blank"
             rel="noopener noreferrer"
             title={`${p.label}`}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-md text-ink-3 transition-colors hover:bg-surface-2 hover:text-ink"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full text-white/75 transition-colors hover:bg-white/10 hover:text-accent"
           >
             <SocialIcon platform={p.key} size={16} />
             <span className="sr-only">Shift Orbit on {p.label}</span>
