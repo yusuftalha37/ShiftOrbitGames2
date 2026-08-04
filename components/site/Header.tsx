@@ -88,8 +88,9 @@ export default function Header() {
           </Link>
 
           {/* Right — social links */}
-          <div className="flex items-center gap-2">
-            <SocialLinks className="hidden sm:flex" />
+          <div className="flex items-center gap-1 sm:gap-2">
+            <SocialLinks className="hidden md:flex" />
+            <AccountLink variant="compact" />
             <Link href="/#contact" className="btn btn-primary btn-sm hidden lg:inline-flex">
               {c.common.getInTouch}
             </Link>

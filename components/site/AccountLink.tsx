@@ -27,15 +27,35 @@ function UserIcon() {
  */
 export default function AccountLink({
   onNavigate,
+  variant = "full",
   className = "",
 }: {
   onNavigate?: () => void
+  /** "compact" is the header treatment: icon always, label from sm up. */
+  variant?: "full" | "compact"
   className?: string
 }) {
   const { user, loading } = useAuth()
   const c = useContent()
 
   if (loading) return null
+
+  if (variant === "compact") {
+    const href = user ? "/admin" : "/admin/login"
+    const label = user ? c.account.panel : c.account.signIn
+    return (
+      <Link
+        href={href}
+        onClick={onNavigate}
+        title={label}
+        className={`inline-flex h-9 items-center gap-2 rounded-full px-3 text-[0.875rem] font-medium text-white/75 transition-colors hover:bg-white/10 hover:text-accent ${className}`}
+      >
+        <UserIcon />
+        <span className="hidden lg:inline">{label}</span>
+        <span className="sr-only lg:hidden">{label}</span>
+      </Link>
+    )
+  }
 
   if (!user) {
     return (
