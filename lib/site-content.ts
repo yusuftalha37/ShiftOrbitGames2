@@ -150,6 +150,7 @@ const en = {
     signingIn: "Signing in…",
     createAccount: "Create account",
     backToSite: "Back to the site",
+    blocked: "This account has been blocked. Contact the studio if you think this is a mistake.",
   },
   footer: {
     description:
@@ -288,6 +289,7 @@ const tr: typeof en = {
     signingIn: "Giriş yapılıyor…",
     createAccount: "Hesap oluştur",
     backToSite: "Siteye dön",
+    blocked: "Bu hesap engellenmiş. Bir yanlışlık olduğunu düşünüyorsan stüdyoyla iletişime geç.",
   },
   footer: {
     description:

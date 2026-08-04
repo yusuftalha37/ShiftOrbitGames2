@@ -191,3 +191,44 @@ adminler yazar), dolayısıyla kuralları yeniden yüklemen gerekir:
 ```bash
 firebase deploy --only firestore:rules
 ```
+
+## Kullanıcı yönetimi
+
+Panelde **Users** sekmesi, siteye giriş yapmış hesapları listeler. Her satırda:
+
+- **Make admin / Remove admin** — hesabın düzenleme yetkisini verir veya alır
+- **Block / Unblock** — hesabı engeller veya engeli kaldırır
+
+Kendi hesabın üzerinde bu düğmeler kapalıdır; yanlışlıkla kendi yetkini alıp
+panelden kilitlenmeni önlemek için.
+
+### Listenin kapsamı
+
+Firebase'in tarayıcı SDK'sı hesapları listeleyemez. Bu yüzden site, her girişte
+hesabı Firestore'daki `users` koleksiyonuna kaydeder ve panel bu dizini
+gösterir. Sonuç: **bu özellik eklenmeden önce açılmış ama o tarihten beri hiç
+giriş yapmamış hesaplar listede görünmez** — bir kez giriş yaptıklarında
+otomatik eklenirler.
+
+### Engellemenin anlamı
+
+Engellenen hesap:
+
+- Girişte anında oturumdan atılır ve kendisine açıklama gösterilir
+- Firestore kuralları tarafından reddedilir; hiçbir şey yazamaz (yorum dahil)
+
+Ancak hesap Firebase Authentication tarafında hâlâ vardır. Hesabı gerçekten
+devre dışı bırakmak (Firebase Auth seviyesinde) sunucu tarafı **Admin SDK**
+gerektirir; bu da bir servis hesabı anahtarı ve sunucu tarafı kod demektir.
+Uygulama seviyesindeki engelleme çoğu durumda yeterlidir.
+
+### Kurallar
+
+Bu özellik `firestore.rules` dosyasını değiştirdi: `users` koleksiyonu eklendi,
+`admins` koleksiyonuna yazma yetkisi adminlere açıldı ve tüm yazma kuralları
+"engelli değilse" koşuluyla güçlendirildi. **Kuralları yeniden yüklemen
+gerekiyor**, yoksa Users sekmesi listeyi yükleyemez:
+
+```bash
+firebase deploy --only firestore:rules
+```

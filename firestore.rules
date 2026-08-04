@@ -3,14 +3,26 @@ rules_version = '2';
 // Deploy with:  firebase deploy --only firestore:rules
 //
 // Signing up gives someone an account, not permission to change the site.
-// Write access is limited to uids that exist in the `admins` collection,
-// which can only be granted from the Firebase console.
+// Write access is limited to uids in `admins` that are not blocked. The
+// first admin has to be created from the Firebase console; after that,
+// admins can promote each other from the admin panel.
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isBlocked() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.blocked == true;
+    }
+
     function isAdmin() {
-      return request.auth != null
-        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+      return signedIn()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && !isBlocked();
     }
 
     // Public content: anyone can read, only admins can change.
@@ -26,7 +38,8 @@ service cloud.firestore {
       // Visitors may leave comments; only admins can moderate them.
       match /comments/{commentId} {
         allow read: if true;
-        allow create: if request.resource.data.name is string
+        allow create: if !isBlocked()
+          && request.resource.data.name is string
           && request.resource.data.name.size() > 0
           && request.resource.data.name.size() <= 40
           && request.resource.data.message is string
@@ -47,10 +60,28 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // An account may check whether it is an admin, but never grant it.
+    // The account directory the admin panel lists.
+    match /users/{uid} {
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == uid);
+      allow list: if isAdmin();
+
+      // People record their own sign-in but must never set their own flags.
+      allow create: if signedIn()
+        && request.auth.uid == uid
+        && !("blocked" in request.resource.data);
+      allow update: if isAdmin()
+        || (signedIn()
+            && request.auth.uid == uid
+            && request.resource.data.diff(resource.data).affectedKeys()
+                 .hasOnly(["email", "displayName", "lastSeenAt"]));
+      allow delete: if isAdmin();
+    }
+
+    // An account may check whether it is an admin; only admins may grant it.
     match /admins/{uid} {
-      allow read: if request.auth != null && request.auth.uid == uid;
-      allow write: if false;
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow list: if isAdmin();
+      allow write: if isAdmin();
     }
 
     // Anything not matched above is closed.

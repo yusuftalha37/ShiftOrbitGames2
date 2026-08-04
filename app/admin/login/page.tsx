@@ -11,6 +11,7 @@ import {
 import { FirebaseError } from "firebase/app"
 import { auth } from "@/lib/firebase"
 import { useContent } from "@/lib/i18n-context"
+import { useAuth } from "@/lib/auth-context"
 
 type Mode = "signin" | "signup"
 
@@ -52,6 +53,7 @@ export default function AdminLoginPage() {
   const [notice, setNotice] = useState("")
   const [loading, setLoading] = useState(false)
   const c = useContent()
+  const { blocked } = useAuth()
 
   function switchMode(next: Mode) {
     setMode(next)
@@ -192,6 +194,11 @@ export default function AdminLoginPage() {
               )}
             </div>
 
+            {blocked && !error && (
+              <p role="alert" className="text-[0.875rem] text-ink-2">
+                {c.account.blocked}
+              </p>
+            )}
             {error && (
               <p role="alert" className="text-[0.875rem] text-ink-2">
                 {error}
