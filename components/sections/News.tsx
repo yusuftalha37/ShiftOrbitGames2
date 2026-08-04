@@ -28,7 +28,7 @@ export default function News() {
           <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
             <div>
               <p className="eyebrow">From the studio</p>
-              <h2 id="news-heading" className="h2 mt-4">
+              <h2 id="news-heading" className="display mt-4 text-[clamp(1.75rem,4vw,2.75rem)]">
                 Latest news
               </h2>
             </div>

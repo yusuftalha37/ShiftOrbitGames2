@@ -2,22 +2,23 @@
 
 /* ─────────────────────────────────────────────────────────────
    Design tokens
-   Near-monochrome canvas. Accent is reserved for signals —
-   eyebrows, links, active states, status marks — never decoration.
+   Dark, cinematic canvas built around game key art. Orange is the
+   single accent: calls to action, active states, highlights.
+   Names stay semantic (paper = background, ink = text).
    ───────────────────────────────────────────────────────────── */
 @theme {
-  --color-paper: #ffffff;
-  --color-surface: #fafaf9;
-  --color-surface-2: #f3f3f0;
-  --color-ink: #0d0f12;
-  --color-ink-2: #3e444d;
-  --color-ink-3: #6c727c;
-  --color-line: #e6e5e1;
-  --color-line-2: #d5d4ce;
-  --color-accent: #2440c8;
-  --color-accent-2: #1b31a0;
-  --color-accent-soft: #eef1fd;
-  --color-positive: #1f7a52;
+  --color-paper: #0a0a0c;
+  --color-surface: #121215;
+  --color-surface-2: #1b1b20;
+  --color-ink: #f6f6f5;
+  --color-ink-2: #b2b2ba;
+  --color-ink-3: #83838d;
+  --color-line: #26262c;
+  --color-line-2: #3a3a43;
+  --color-accent: #ffa424;
+  --color-accent-2: #ffb851;
+  --color-accent-soft: #2a1f0d;
+  --color-positive: #34d399;
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -48,7 +49,7 @@ body {
 
 ::selection {
   background: var(--color-accent);
-  color: #fff;
+  color: #17130a;
 }
 
 :focus-visible {
@@ -102,6 +103,14 @@ body {
   color: var(--color-ink-2);
 }
 
+/* Big, tight, uppercase — the register the hero and section titles use. */
+.display {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  text-transform: uppercase;
+}
+
 .eyebrow {
   font-size: 0.75rem;
   font-weight: 600;
@@ -121,11 +130,11 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  height: 2.75rem;
-  padding-inline: 1.125rem;
-  border-radius: 8px;
+  height: 2.875rem;
+  padding-inline: 1.5rem;
+  border-radius: 999px;
   font-size: 0.9375rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: -0.006em;
   white-space: nowrap;
   transition: background-color 0.15s ease, border-color 0.15s ease,
@@ -138,34 +147,34 @@ body {
 }
 
 .btn-primary {
-  background: var(--color-ink);
-  color: #fff;
-  border: 1px solid var(--color-ink);
+  background: var(--color-accent);
+  color: #17130a;
+  border: 1px solid var(--color-accent);
 }
 .btn-primary:hover {
-  background: #21262e;
-  border-color: #21262e;
+  background: var(--color-accent-2);
+  border-color: var(--color-accent-2);
 }
 
 .btn-secondary {
-  background: var(--color-paper);
+  background: transparent;
   color: var(--color-ink);
   border: 1px solid var(--color-line-2);
 }
 .btn-secondary:hover {
-  background: var(--color-surface);
+  background: var(--color-surface-2);
   border-color: var(--color-ink-3);
 }
 
 .btn-sm {
   height: 2.25rem;
-  padding-inline: 0.875rem;
+  padding-inline: 1.125rem;
   font-size: 0.875rem;
 }
 
 /* ─── Surfaces ──────────────────────────────────────────────── */
 .card {
-  background: var(--color-paper);
+  background: var(--color-surface);
   border: 1px solid var(--color-line);
   border-radius: 12px;
   transition: border-color 0.18s ease, box-shadow 0.18s ease;
@@ -173,25 +182,24 @@ body {
 
 .card-hover:hover {
   border-color: var(--color-line-2);
-  box-shadow: 0 1px 2px rgba(13, 15, 18, 0.04),
-    0 8px 24px -12px rgba(13, 15, 18, 0.14);
+  box-shadow: 0 12px 32px -16px rgba(0, 0, 0, 0.8);
 }
 
 .chip {
   display: inline-flex;
   align-items: center;
   height: 1.625rem;
-  padding-inline: 0.5rem;
-  border: 1px solid var(--color-line);
-  border-radius: 5px;
-  background: var(--color-surface);
+  padding-inline: 0.625rem;
+  border: 1px solid var(--color-line-2);
+  border-radius: 999px;
+  background: var(--color-surface-2);
   font-size: 0.75rem;
   color: var(--color-ink-2);
 }
 
 /* Declared after .chip so it wins the cascade on tinted sections. */
 .chip-solid {
-  background: var(--color-paper);
+  background: var(--color-surface-2);
 }
 
 .link-accent {

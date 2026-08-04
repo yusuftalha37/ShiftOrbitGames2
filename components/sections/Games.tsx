@@ -190,7 +190,7 @@ export default function Games() {
           <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
             <div>
               <p className="eyebrow">{copy.eyebrow}</p>
-              <h2 id="games-heading" className="h2 mt-4">
+              <h2 id="games-heading" className="display mt-4 text-[clamp(1.75rem,4vw,2.75rem)]">
                 {copy.heading}
               </h2>
               <p className="lead mt-5 max-w-[52ch]">{copy.body}</p>
@@ -214,7 +214,7 @@ export default function Games() {
                   aria-pressed={filter === f.key}
                   className={`rounded-full border px-3.5 py-1.5 text-[0.8125rem] font-medium transition-colors ${
                     filter === f.key
-                      ? "border-ink bg-ink text-white"
+                      ? "border-accent bg-accent text-[#17130a]"
                       : "border-line text-ink-2 hover:border-line-2 hover:text-ink"
                   }`}
                 >

@@ -34,7 +34,7 @@ export default function TeamPage() {
         <header className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
           <div className="max-w-[52ch]">
             <p className="eyebrow">The crew</p>
-            <h1 className="h2 mt-4">Team members</h1>
+            <h1 className="display mt-4 text-[clamp(1.75rem,4vw,2.75rem)]">Team members</h1>
             <p className="lead mt-5">
               The people who design, build, and look after every world we ship.
             </p>
@@ -56,7 +56,7 @@ export default function TeamPage() {
                 aria-pressed={active === g.key}
                 className={`rounded-full border px-3.5 py-1.5 text-[0.8125rem] font-medium transition-colors ${
                   active === g.key
-                    ? "border-ink bg-ink text-white"
+                    ? "border-accent bg-accent text-[#17130a]"
                     : "border-line text-ink-2 hover:border-line-2 hover:text-ink"
                 }`}
               >

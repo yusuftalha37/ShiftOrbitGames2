@@ -54,7 +54,7 @@ export default function Contact() {
       <div className="container-page grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
         <div className="lg:col-span-5">
           <p className="eyebrow">{contact.eyebrow}</p>
-          <h2 id="contact-heading" className="h2 mt-4">
+          <h2 id="contact-heading" className="display mt-4 text-[clamp(1.75rem,4vw,2.75rem)]">
             {contact.heading}
           </h2>
           <p className="lead mt-5 max-w-[46ch]">{contact.body}</p>

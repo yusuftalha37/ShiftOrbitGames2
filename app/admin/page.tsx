@@ -120,7 +120,7 @@ export default function AdminDashboard() {
               onClick={() => setTab(t.key)}
               className={`rounded-md px-4 py-1.5 text-[0.875rem] font-medium transition-colors ${
                 tab === t.key
-                  ? "bg-paper text-ink shadow-[0_1px_2px_rgba(13,15,18,0.06)]"
+                  ? "bg-surface-2 text-ink"
                   : "text-ink-3 hover:text-ink"
               }`}
             >

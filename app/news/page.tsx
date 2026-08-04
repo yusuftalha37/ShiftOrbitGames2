@@ -119,7 +119,7 @@ export default function NewsPage() {
         <header className="flex flex-wrap items-end justify-between gap-x-8 gap-y-6">
           <div className="max-w-[52ch]">
             <p className="eyebrow">Latest updates</p>
-            <h1 className="h2 mt-4">News &amp; blog</h1>
+            <h1 className="display mt-4 text-[clamp(1.75rem,4vw,2.75rem)]">News &amp; blog</h1>
             <p className="lead mt-5">
               Development updates, announcements, and stories from the Shift
               Orbit team.

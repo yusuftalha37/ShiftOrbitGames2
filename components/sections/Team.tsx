@@ -27,7 +27,7 @@ export default function Team() {
           <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
             <div>
               <p className="eyebrow">{copy.eyebrow}</p>
-              <h2 id="team-heading" className="h2 mt-4">
+              <h2 id="team-heading" className="display mt-4 text-[clamp(1.75rem,4vw,2.75rem)]">
                 {copy.heading}
               </h2>
               <p className="lead mt-5 max-w-[52ch]">{copy.body}</p>

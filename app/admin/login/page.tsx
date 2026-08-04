@@ -121,7 +121,7 @@ export default function AdminLoginPage() {
                 onClick={() => switchMode(m)}
                 className={`flex-1 rounded-md px-3 py-1.5 text-[0.875rem] font-medium transition-colors ${
                   mode === m
-                    ? "bg-paper text-ink shadow-[0_1px_2px_rgba(13,15,18,0.06)]"
+                    ? "bg-surface-2 text-ink"
                     : "text-ink-3 hover:text-ink"
                 }`}
               >
