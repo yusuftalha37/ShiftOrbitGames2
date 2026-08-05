@@ -78,15 +78,34 @@ export async function getGameById(id: string): Promise<Game | null> {
 
 export type GameInput = Omit<Game, "id" | "slug" | "order">
 
+function isSafeHttpsUrl(url: string): boolean {
+  if (!url) return true
+  return /^https:\/\/.+/i.test(url.trim())
+}
+
+function sanitizeGameInput(data: GameInput): GameInput {
+  return {
+    ...data,
+    trailer: isSafeHttpsUrl(data.trailer ?? "") ? data.trailer : "",
+    steamUrl: isSafeHttpsUrl(data.steamUrl ?? "") ? data.steamUrl : "",
+    epicUrl: isSafeHttpsUrl(data.epicUrl ?? "") ? data.epicUrl : "",
+    socialContent: data.socialContent.filter((s) => isSafeHttpsUrl(s.url)),
+    screenshots: data.screenshots.filter((s) => isSafeHttpsUrl(s)),
+    coverImage: isSafeHttpsUrl(data.coverImage ?? "") ? data.coverImage : "",
+  }
+}
+
 export async function createGame(data: GameInput) {
+  const safe = sanitizeGameInput(data)
   const all = await getAllGames()
   const maxOrder = all.reduce((m, g) => Math.max(m, g.order ?? 0), 0)
-  await addDoc(gamesCol, { ...data, slug: slugify(data.title), order: maxOrder + 1 })
+  await addDoc(gamesCol, { ...safe, slug: slugify(safe.title), order: maxOrder + 1 })
 }
 
 export async function updateGame(id: string, data: GameInput) {
+  const safe = sanitizeGameInput(data)
   const ref = doc(db, "games", id)
-  await updateDoc(ref, { ...data, slug: slugify(data.title) })
+  await updateDoc(ref, { ...safe, slug: slugify(safe.title) })
 }
 
 export async function deleteGame(id: string) {

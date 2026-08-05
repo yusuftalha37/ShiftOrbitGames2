@@ -115,7 +115,7 @@ export default function GamePage({ params }: Props) {
         {/* ─── CONTENT ─────────────────────────────────────────── */}
         <div className="mt-14 grid grid-cols-1 gap-12 lg:grid-cols-3 lg:gap-16">
           <div className="space-y-14 lg:col-span-2">
-            {game.trailer && (
+            {game.trailer && /^https:\/\/www\.youtube(?:-nocookie)?\.com\/embed\//.test(game.trailer) && (
               <section aria-labelledby="trailer-heading">
                 <SectionTitle id="trailer-heading">Trailer</SectionTitle>
                 <div className="aspect-video overflow-hidden rounded-xl border border-line bg-surface-2">
@@ -124,6 +124,8 @@ export default function GamePage({ params }: Props) {
                     className="h-full w-full"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
+                    referrerPolicy="no-referrer"
+                    sandbox="allow-scripts allow-same-origin allow-presentation"
                     title={`${game.title} trailer`}
                   />
                 </div>

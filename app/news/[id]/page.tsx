@@ -17,7 +17,6 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
   const [comments, setComments] = useState<Comment[]>([])
   const [linkedGame, setLinkedGame] = useState<Game | null>(null)
   const [loading, setLoading] = useState(true)
-  const [name, setName] = useState("")
   const [message, setMessage] = useState("")
   const [submitting, setSubmitting] = useState(false)
 
@@ -37,11 +36,11 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!user || !name.trim() || !message.trim()) return
+    if (!user || !message.trim()) return
+    const displayName = user.displayName || user.email || "Anonymous"
     setSubmitting(true)
     try {
-      await addComment(id, { name: name.trim(), message: message.trim(), uid: user.uid })
-      setName("")
+      await addComment(id, { name: displayName, message: message.trim(), uid: user.uid })
       setMessage("")
       await loadComments()
     } finally {
@@ -111,19 +110,9 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
 
           {user ? (
             <form onSubmit={handleSubmit} className="card mb-8 space-y-4 p-6">
-              <div>
-                <label htmlFor="comment-name" className="block text-[0.8125rem] font-medium text-ink">
-                  Name
-                </label>
-                <input
-                  id="comment-name"
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  maxLength={40}
-                  className="mt-2 w-full rounded-lg border border-line-2 bg-paper px-3.5 py-2.5 text-[0.9375rem] text-ink transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
-                />
-              </div>
+              <p className="text-[0.8125rem] text-ink-2">
+                Commenting as <span className="font-medium text-ink">{user.displayName || user.email}</span>
+              </p>
               <div>
                 <label htmlFor="comment-message" className="block text-[0.8125rem] font-medium text-ink">
                   Comment

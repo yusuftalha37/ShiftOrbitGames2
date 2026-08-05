@@ -17,7 +17,7 @@ const ALLOWED_TAGS = [
   "a", "img", "hr",
 ]
 
-const ALLOWED_ATTR = ["href", "target", "rel", "src", "alt", "title", "style", "class"]
+const ALLOWED_ATTR = ["href", "target", "rel", "src", "alt", "title", "class"]
 
 export function sanitizeHtml(html: string) {
   return DOMPurify.sanitize(html, {
