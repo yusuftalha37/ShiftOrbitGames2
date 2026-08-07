@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
 // Siteyi kapatmak için true, açmak için false yap
-const MAINTENANCE_MODE = true
+const MAINTENANCE_MODE = false
 
 // Rate limiting: IP başına dakikada max istek sayısı
 const RATE_LIMIT = 60
