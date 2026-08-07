@@ -60,7 +60,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         // Keeps the directory the admin panel lists up to date.
         recordSignIn(u).catch(() => {})
-      } catch {
+      } catch (err) {
+        console.warn("Firestore unreachable — user authenticated but role check skipped:", err)
         setUser(u)
         setIsAdmin(false)
       } finally {

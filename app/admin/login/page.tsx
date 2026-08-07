@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import {
@@ -60,7 +60,13 @@ export default function AdminLoginPage() {
   const [notice, setNotice] = useState("")
   const [loading, setLoading] = useState(false)
   const c = useContent()
-  const { blocked } = useAuth()
+  const { user, blocked, loading: authLoading } = useAuth()
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.push("/admin")
+    }
+  }, [authLoading, user, router])
 
   function switchMode(next: Mode) {
     setMode(next)
@@ -82,7 +88,6 @@ export default function AdminLoginPage() {
           await updateProfile(cred.user, { displayName: name.trim() })
         }
       }
-      router.push("/admin")
     } catch (err) {
       setError(messageFor(err instanceof FirebaseError ? err.code : ""))
     } finally {
@@ -96,9 +101,11 @@ export default function AdminLoginPage() {
     setLoading(true)
     try {
       await signInWithPopup(auth, new GoogleAuthProvider())
-      router.push("/admin")
-    } catch (err) {
-      setError(messageFor(err instanceof FirebaseError ? err.code : ""))
+    } catch (err: unknown) {
+      console.error("Google sign-in error:", err)
+      const code = err instanceof FirebaseError ? err.code : ""
+      if (code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request") return
+      setError(messageFor(code))
     } finally {
       setLoading(false)
     }
