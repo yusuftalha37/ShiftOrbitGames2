@@ -7,11 +7,10 @@ import { recordSignIn } from "./users"
 
 interface AuthContextValue {
   user: User | null
-  /** True only for accounts listed in the `admins` collection. */
   isAdmin: boolean
-  /** Set when the account was signed out because an admin blocked it. */
   blocked: boolean
   loading: boolean
+  roleLoading: boolean
 }
 
 const AuthContext = createContext<AuthContextValue>({
@@ -19,6 +18,7 @@ const AuthContext = createContext<AuthContextValue>({
   isAdmin: false,
   blocked: false,
   loading: true,
+  roleLoading: true,
 })
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -26,6 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false)
   const [blocked, setBlocked] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [roleLoading, setRoleLoading] = useState(true)
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
@@ -34,42 +35,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsAdmin(false)
         setBlocked(false)
         setLoading(false)
+        setRoleLoading(false)
         return
       }
 
       setUser(u)
       setLoading(false)
 
-      const checkRole = async () => {
-        try {
-          const [profile, admin] = await Promise.all([
-            getDoc(doc(db, "users", u.uid)),
-            getDoc(doc(db, "admins", u.uid)),
-          ])
-
+      setRoleLoading(true)
+      Promise.all([
+        getDoc(doc(db, "users", u.uid)),
+        getDoc(doc(db, "admins", u.uid)),
+      ])
+        .then(([profile, admin]) => {
           if (profile.exists() && profile.data().blocked === true) {
             setBlocked(true)
             setUser(null)
             setIsAdmin(false)
-            await signOut(auth)
+            signOut(auth)
             return
           }
-
           setBlocked(false)
           setIsAdmin(admin.exists())
           recordSignIn(u).catch(() => {})
-        } catch (err) {
+        })
+        .catch((err) => {
           console.warn("Firestore unreachable:", err)
           setIsAdmin(false)
-        }
-      }
-      checkRole()
+        })
+        .finally(() => setRoleLoading(false))
     })
     return () => unsub()
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin, blocked, loading }}>
+    <AuthContext.Provider value={{ user, isAdmin, blocked, loading, roleLoading }}>
       {children}
     </AuthContext.Provider>
   )

@@ -25,7 +25,7 @@ const TABS: { key: Tab; label: string }[] = [
 ]
 
 export default function AdminDashboard() {
-  const { user, isAdmin, loading: authLoading } = useAuth()
+  const { user, isAdmin, loading: authLoading, roleLoading } = useAuth()
   const router = useRouter()
   const [tab, setTab] = useState<Tab>("overview")
   const [copied, setCopied] = useState(false)
@@ -36,14 +36,12 @@ export default function AdminDashboard() {
     }
   }, [authLoading, user, router])
 
-  if (authLoading || !user) {
+  if (authLoading || roleLoading || !user) {
     return (
       <div className="section container-page text-[0.9375rem] text-ink-3">Loading…</div>
     )
   }
 
-  // Signed in, but not on the admin list. Show the uid so an existing admin
-  // can grant access rather than leaving the person at a dead end.
   if (!isAdmin) {
     return (
       <div className="flex min-h-[70vh] items-center justify-center px-6 py-16">
