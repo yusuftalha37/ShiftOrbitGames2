@@ -28,45 +28,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (u) => {
+    const unsub = onAuthStateChanged(auth, (u) => {
       if (!u) {
         setUser(null)
         setIsAdmin(false)
+        setBlocked(false)
         setLoading(false)
         return
       }
 
-      try {
-        const profile = await getDoc(doc(db, "users", u.uid))
+      setUser(u)
+      setLoading(false)
 
-        // A blocked account is signed straight back out. Firestore rules deny
-        // its writes regardless — this only keeps the interface honest.
-        if (profile.exists() && profile.data().blocked === true) {
-          setBlocked(true)
-          setUser(null)
+      const checkRole = async () => {
+        try {
+          const [profile, admin] = await Promise.all([
+            getDoc(doc(db, "users", u.uid)),
+            getDoc(doc(db, "admins", u.uid)),
+          ])
+
+          if (profile.exists() && profile.data().blocked === true) {
+            setBlocked(true)
+            setUser(null)
+            setIsAdmin(false)
+            await signOut(auth)
+            return
+          }
+
+          setBlocked(false)
+          setIsAdmin(admin.exists())
+          recordSignIn(u).catch(() => {})
+        } catch (err) {
+          console.warn("Firestore unreachable:", err)
           setIsAdmin(false)
-          setLoading(false)
-          await signOut(auth)
-          return
         }
-
-        setBlocked(false)
-        setUser(u)
-
-        // Having an account is not the same as being allowed to edit the
-        // site: the uid also has to exist in `admins`.
-        const admin = await getDoc(doc(db, "admins", u.uid))
-        setIsAdmin(admin.exists())
-
-        // Keeps the directory the admin panel lists up to date.
-        recordSignIn(u).catch(() => {})
-      } catch (err) {
-        console.warn("Firestore unreachable — user authenticated but role check skipped:", err)
-        setUser(u)
-        setIsAdmin(false)
-      } finally {
-        setLoading(false)
       }
+      checkRole()
     })
     return () => unsub()
   }, [])
