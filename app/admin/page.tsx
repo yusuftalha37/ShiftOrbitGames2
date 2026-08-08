@@ -25,7 +25,7 @@ const TABS: { key: Tab; label: string }[] = [
 ]
 
 export default function AdminDashboard() {
-  const { user, isAdmin, loading: authLoading, roleLoading } = useAuth()
+  const { user, isAdmin, loading: authLoading } = useAuth()
   const router = useRouter()
   const [tab, setTab] = useState<Tab>("overview")
   const [copied, setCopied] = useState(false)
@@ -36,7 +36,7 @@ export default function AdminDashboard() {
     }
   }, [authLoading, user, router])
 
-  if (authLoading || roleLoading || !user) {
+  if (authLoading || !user) {
     return (
       <div className="section container-page text-[0.9375rem] text-ink-3">Loading…</div>
     )
